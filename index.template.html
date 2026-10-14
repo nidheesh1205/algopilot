@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Algorithm 2035: Autonomous DAA Decision Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Algorithm 2035</h1>
+      <p>Describe a smart-city problem by its properties. The framework recognises the problem, picks a technique from the DAA syllabus, runs it and explains the choice.</p>
+    </div>
+    <span id="testBadge" class="tbadge" role="status">Running checks...</span>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" data-tab="solve" aria-selected="true">Solve a request</button>
+    <button class="tab" role="tab" data-tab="adapt" aria-selected="false">Adaptation demos</button>
+    <button class="tab" role="tab" data-tab="lab" aria-selected="false">Stress-test lab</button>
+    <button class="tab" role="tab" data-tab="theory" aria-selected="false">Complexity and gaps</button>
+    <button class="tab" role="tab" data-tab="tests" aria-selected="false">Correctness checks</button>
+  </div>
+
+  <main>
+    <section class="panel" id="tab-solve">
+      <div class="solve">
+        <aside class="req" aria-label="City request">
+          <h2>City request</h2>
+          <div class="presets" id="presets"></div>
+          <div id="form"></div>
+          <button type="button" class="btn" id="run">Recognise and solve</button>
+          <details><summary>Request exactly as the engine receives it</summary><pre id="reqjson"></pre></details>
+        </aside>
+        <section aria-live="polite">
+          <p class="scenario" id="scenario"></p>
+          <div id="pipeline"></div>
+          <div id="result"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-adapt" hidden>
+      <div class="sect"><h2>Change one property, change the technique</h2>
+      <p>Each card runs the same engine twice (or three times) on requests that differ in one property only. The framework's choice, and the reason for it, follows the property.</p></div>
+      <div id="adaptList"></div>
+    </section>
+
+    <section class="panel" id="tab-lab" hidden>
+      <div class="sect"><h2>Stress-test lab</h2>
+      <p>Every prescribed topic is tested on a generated family of inputs. Measured operation counts are plotted on a logarithmic axis against the theoretical bound, then rated Low, Moderate or High risk.</p>
+      <button type="button" class="btn" id="runAll" style="max-width:260px">Run all experiments</button></div>
+      <div class="card"><h3>Risk summary</h3>
+        <div class="scroll"><table><thead><tr><th>Test family</th><th>Theoretical bound</th><th>Observed</th><th>Risk</th></tr></thead><tbody id="riskBody"></tbody></table></div>
+        <p class="muted" style="margin-top:10px">Low: practical for the tested sizes and matches the expected growth. Moderate: growth is significant, so input limits or alternatives should be considered. High: the exact approach becomes impractical or resource use grows severely.</p>
+      </div>
+      <div id="labList"></div>
+    </section>
+
+    <section class="panel" id="tab-theory" hidden>
+      <div class="sect"><h2>Complexity classes, stated carefully</h2>
+      <p>Decision and optimisation versions are kept apart. The framework as a whole is not NP-Hard: only the combinatorial components below are, and the table says which.</p></div>
+      <div class="card"><div class="scroll"><table><thead><tr><th>Problem</th><th>Technique</th><th>Time</th><th>Space</th><th>Decision form</th><th>Optimisation form</th><th>Class</th></tr></thead><tbody id="classBody"></tbody></table></div></div>
+      <div class="sect"><h2>Gaps that led to new algorithms</h2>
+      <p>Each limitation below is something this app measures, and each one motivated a newer algorithm. <span id="gapEvidence" class="muted"></span></p></div>
+      <div class="card"><div class="scroll"><table><thead><tr><th>Gap in the syllabus algorithm</th><th>What was developed to close it</th><th>Evidence measured here</th></tr></thead><tbody id="gapBody"></tbody></table></div></div>
+    </section>
+
+    <section class="panel" id="tab-tests" hidden>
+      <div class="sect"><h2>Correctness checks</h2>
+      <p>Each structure and algorithm is checked against an independent method: sorted order, brute force, Bellman-Ford or exhaustive recursion.</p></div>
+      <div class="card"><ul class="tests" id="testList"></ul></div>
+    </section>
+  </main>
+  <p class="foot">Design and Analysis of Algorithms framework assignment. All data structures and algorithms are implemented from scratch in plain JavaScript.</p>
+</div>
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

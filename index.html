@@ -1,0 +1,2781 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Algorithm 2035: Autonomous DAA Decision Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2F1;--panel:#FFFFFF;--ink:#14232B;--mute:#52636B;--rule:#CBD6D8;--soft:#E3EAEA;
+  --teal:#0B6F6A;--amber:#9A6A00;--mag:#B02B68;--blue:#2556A8;--green:#2B7A38;--accent:#0B6F6A;--on-accent:#FFFFFF;
+  --s1:#0B6F6A;--s2:#B02B68;--s3:#2556A8;--s4:#B07A00;--s5:#6B4FA8;--line:var(--teal);
+  --head:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0D171C;--panel:#15242B;--ink:#E6EEF0;--mute:#98AAB1;--rule:#2A414B;--soft:#1C2E36;
+  --teal:#3CC4BC;--amber:#E8B03A;--mag:#F07AAE;--blue:#7FAAF2;--green:#6FCB82;--accent:#3CC4BC;--on-accent:#06201F;
+  --s1:#3CC4BC;--s2:#F07AAE;--s3:#7FAAF2;--s4:#E8B03A;--s5:#B79CF0;}}
+:root[data-theme="dark"]{
+  --paper:#0D171C;--panel:#15242B;--ink:#E6EEF0;--mute:#98AAB1;--rule:#2A414B;--soft:#1C2E36;
+  --teal:#3CC4BC;--amber:#E8B03A;--mag:#F07AAE;--blue:#7FAAF2;--green:#6FCB82;--accent:#3CC4BC;--on-accent:#06201F;
+  --s1:#3CC4BC;--s2:#F07AAE;--s3:#7FAAF2;--s4:#E8B03A;--s5:#B79CF0;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15.5px/1.55 var(--body);-webkit-text-size-adjust:100%}
+.c-teal{--line:var(--teal)}.c-amber{--line:var(--amber)}.c-mag{--line:var(--mag)}.c-blue{--line:var(--blue)}
+h1,h2,h3,h4{font-family:var(--head);margin:0;line-height:1.15;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,4.5vw,3rem);font-weight:700}
+h2{font-size:1.6rem;font-weight:700}h3{font-size:1.25rem;font-weight:600}h4{font-size:1rem;font-weight:600;margin-bottom:6px}
+p{margin:0 0 .6em}.muted{color:var(--mute);font-size:.88rem;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+.top{padding:28px 0 8px;display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+.top p{margin:6px 0 0;color:var(--mute);max-width:60ch}
+.tbadge{font-size:.82rem;padding:5px 12px;border-radius:99px;border:1px solid var(--rule);background:var(--panel);color:var(--mute)}
+.tbadge.ok{color:var(--green);border-color:var(--green)}.tbadge.bad{color:var(--mag);border-color:var(--mag)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin:14px 0 22px;overflow-x:auto}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;font:600 .95rem var(--body);color:var(--mute);cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:hover{color:var(--ink)}
+.solve{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:26px;align-items:start}
+@media(max-width:960px){.solve{grid-template-columns:1fr}}
+.req{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:18px;position:sticky;top:12px}
+@media(max-width:960px){.req{position:static}}
+.req h2{font-size:1.2rem;margin-bottom:10px}
+.presets{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto;margin-bottom:16px;padding-right:2px}
+.pre{appearance:none;text-align:left;border:1px solid var(--rule);border-left:5px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 10px;border-radius:6px;cursor:pointer;font:inherit;display:flex;flex-direction:column}
+.pre:hover{background:var(--soft)}
+.pre.on{background:color-mix(in srgb,var(--line) 14%,var(--panel));border-color:var(--line)}
+.pt{font-weight:600;font-size:.92rem}.pf{font-size:.78rem;color:var(--mute)}
+.fld{display:block;margin-bottom:12px}.fld>span{display:block;font-size:.86rem;font-weight:600;margin-bottom:4px}
+.fld small{display:block;color:var(--mute);margin-top:3px}
+input[type=text],input[type=number],select,textarea{width:100%;font:inherit;font-size:.92rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:7px 9px}
+textarea{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.4;resize:vertical}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.chk{display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;font-size:.9rem}.chk input{margin-top:4px;accent-color:var(--accent)}
+.hint{color:var(--mute);font-size:.84rem;margin:-4px 0 12px}
+.btn{appearance:none;border:0;background:var(--accent);color:var(--on-accent);font:600 .95rem var(--body);padding:10px 16px;border-radius:6px;cursor:pointer;width:100%}
+.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.6;cursor:progress}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);width:auto;padding:6px 14px}
+details summary{cursor:pointer;color:var(--mute);font-size:.86rem;margin-top:12px}
+pre{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:10px;overflow:auto;font-size:.76rem;max-height:240px}
+.scenario{font-size:1.05rem;margin:0 0 18px;max-width:70ch}
+/* the metro-line pipeline */
+.pipe{margin-bottom:22px}.pipe ol{list-style:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin:0;padding:0}
+.pipe li{position:relative;padding:32px 10px 0 0;min-height:70px}
+.pipe li::before{content:"";position:absolute;top:8px;left:0;right:0;height:6px;background:var(--line)}
+.pipe li:first-child::before{left:11px}.pipe li:last-child::before{right:calc(100% - 11px)}
+.dot{position:absolute;top:0;left:0;width:22px;height:22px;border-radius:50%;background:var(--panel);border:5px solid var(--line);z-index:1}
+.pipe.done .dot{background:var(--line)}
+.pipe li b{display:block;font-family:var(--head);font-weight:600;font-size:.95rem}
+.cap{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-size:.8rem;color:var(--mute);margin-top:2px;overflow-wrap:anywhere}
+@media(prefers-reduced-motion:no-preference){.pipe.done .dot{animation:lit .4s both;animation-delay:calc(var(--i)*110ms)}@keyframes lit{from{transform:scale(.4);opacity:.3}to{transform:scale(1);opacity:1}}}
+@media(max-width:720px){
+  .pipe ol{grid-template-columns:1fr}
+  .pipe li{padding:0 0 18px 38px;min-height:0}
+  .pipe li::before{top:0;bottom:0;left:8px;right:auto;width:6px;height:auto}
+  .pipe li:first-child::before{top:11px;left:8px}.pipe li:last-child::before{bottom:calc(100% - 11px);right:auto}
+  .dot{top:0}
+}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:20px 22px;margin-bottom:18px}
+.card[class*="c-"]{border-left:6px solid var(--line)}
+.rhead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+.model{background:var(--soft);padding:9px 12px;border-radius:6px;font-size:.9rem}
+.choice{margin:16px 0}.choice h3{font-size:1.55rem;margin:2px 0 8px;color:var(--line)}
+.choice ul,.blk ul,.trace ul{margin:0;padding-left:20px}.choice li,.blk li{margin-bottom:4px}
+.warn{background:color-mix(in srgb,var(--amber) 13%,var(--panel));border-left:4px solid var(--amber);padding:8px 12px;border-radius:4px;font-size:.9rem}
+.blk{margin:16px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+dl{margin:0}dl>div{display:grid;grid-template-columns:minmax(120px,32%) 1fr;gap:10px;padding:6px 0;border-bottom:1px solid var(--soft)}
+dt{color:var(--mute);font-size:.88rem}dd{margin:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--soft);vertical-align:top}
+th{font-weight:600;border-bottom:2px solid var(--rule);white-space:nowrap}
+th.hl,td.hl{background:color-mix(in srgb,var(--line) 11%,transparent)}
+.badge{display:inline-block;padding:4px 11px;border-radius:99px;font-size:.8rem;font-weight:600;border:1.5px solid currentColor;max-width:34ch}
+.k-P{color:var(--green)}.k-pseudo{color:var(--amber)}.k-NPH,.k-NPC{color:var(--mag)}.k-other{color:var(--blue)}
+.trace li{list-style:none;margin:3px 0;font-size:.86rem;color:var(--mute)}.trace ul{padding-left:0}
+.trace li.hit{color:var(--ink);font-weight:500}.trace em{font-style:normal;margin-left:6px;color:var(--mute)}.trace li.hit em{color:var(--line);font-weight:600}
+.board{display:grid;grid-template-columns:repeat(var(--n),1fr);width:min(100%,360px);border:2px solid var(--rule)}
+.board i{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--panel);font-style:normal;color:var(--line);font-size:clamp(10px,3vw,22px)}
+.board i.dk{background:var(--soft)}
+.err{border-left:6px solid var(--mag)}
+.vars{display:grid;gap:14px;margin:12px 0}.vars.n2{grid-template-columns:1fr 1fr}.vars.n3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.vars.n2,.vars.n3{grid-template-columns:1fr}}
+.var{border:1px solid var(--rule);border-top:5px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--paper)}
+.var h4{font-size:1.15rem;color:var(--line);margin:2px 0 6px}.var .pn{font-size:.82rem;color:var(--mute);margin:0}.var .hd{font-size:.86rem}
+.verdict{font-weight:600;margin:6px 0 0}.verdict.yes{color:var(--green)}.verdict.no{color:var(--amber)}
+.chart{width:100%;height:auto;margin-top:8px}.chart .grid{stroke:var(--rule);stroke-width:1}.chart .axis{stroke:var(--mute);stroke-width:1}
+.chart .tk{fill:var(--mute);font-size:11px}.chart .al{fill:var(--ink);font-size:12px}
+.theory{stroke:var(--mute);stroke-width:1.6;stroke-dasharray:2 4;fill:none}
+.legend{list-style:none;display:flex;flex-wrap:wrap;gap:6px 18px;padding:0;margin:4px 0 12px;font-size:.84rem}.legend li{display:flex;align-items:center;gap:6px}
+.risk{padding:8px 12px;border-radius:6px;border-left:5px solid currentColor;background:var(--soft);margin:12px 0 0}
+.r-Low{color:var(--green)}.r-Moderate{color:var(--amber)}.r-High{color:var(--mag)}
+.risk b,.risk-pill{font-weight:700}.risk span,.risk{color:var(--ink)}.risk{border-left-color:currentColor}
+.risk.r-Low{border-left-color:var(--green)}.risk.r-Moderate{border-left-color:var(--amber)}.risk.r-High{border-left-color:var(--mag)}
+.risk b{color:inherit}.risk.r-Low b{color:var(--green)}.risk.r-Moderate b{color:var(--amber)}.risk.r-High b{color:var(--mag)}
+.risk-pill{padding:2px 10px;border-radius:99px;border:1.5px solid currentColor;font-size:.8rem}
+.finding{margin-top:12px;font-weight:500}
+.sect{margin:0 0 20px}.sect p{max-width:75ch}
+.tests{list-style:none;padding:0}.tests li{padding:7px 0;border-bottom:1px solid var(--soft)}.tests span{display:inline-block;width:46px;font-weight:700}
+.tests .pass span{color:var(--green)}.tests .fail span{color:var(--mag)}.tests em{color:var(--mag);font-style:normal}
+.foot{color:var(--mute);font-size:.82rem;padding:30px 0 40px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Algorithm 2035</h1>
+      <p>Describe a smart-city problem by its properties. The framework recognises the problem, picks a technique from the DAA syllabus, runs it and explains the choice.</p>
+    </div>
+    <span id="testBadge" class="tbadge" role="status">Running checks...</span>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" data-tab="solve" aria-selected="true">Solve a request</button>
+    <button class="tab" role="tab" data-tab="adapt" aria-selected="false">Adaptation demos</button>
+    <button class="tab" role="tab" data-tab="lab" aria-selected="false">Stress-test lab</button>
+    <button class="tab" role="tab" data-tab="theory" aria-selected="false">Complexity and gaps</button>
+    <button class="tab" role="tab" data-tab="tests" aria-selected="false">Correctness checks</button>
+  </div>
+
+  <main>
+    <section class="panel" id="tab-solve">
+      <div class="solve">
+        <aside class="req" aria-label="City request">
+          <h2>City request</h2>
+          <div class="presets" id="presets"></div>
+          <div id="form"></div>
+          <button type="button" class="btn" id="run">Recognise and solve</button>
+          <details><summary>Request exactly as the engine receives it</summary><pre id="reqjson"></pre></details>
+        </aside>
+        <section aria-live="polite">
+          <p class="scenario" id="scenario"></p>
+          <div id="pipeline"></div>
+          <div id="result"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-adapt" hidden>
+      <div class="sect"><h2>Change one property, change the technique</h2>
+      <p>Each card runs the same engine twice (or three times) on requests that differ in one property only. The framework's choice, and the reason for it, follows the property.</p></div>
+      <div id="adaptList"></div>
+    </section>
+
+    <section class="panel" id="tab-lab" hidden>
+      <div class="sect"><h2>Stress-test lab</h2>
+      <p>Every prescribed topic is tested on a generated family of inputs. Measured operation counts are plotted on a logarithmic axis against the theoretical bound, then rated Low, Moderate or High risk.</p>
+      <button type="button" class="btn" id="runAll" style="max-width:260px">Run all experiments</button></div>
+      <div class="card"><h3>Risk summary</h3>
+        <div class="scroll"><table><thead><tr><th>Test family</th><th>Theoretical bound</th><th>Observed</th><th>Risk</th></tr></thead><tbody id="riskBody"></tbody></table></div>
+        <p class="muted" style="margin-top:10px">Low: practical for the tested sizes and matches the expected growth. Moderate: growth is significant, so input limits or alternatives should be considered. High: the exact approach becomes impractical or resource use grows severely.</p>
+      </div>
+      <div id="labList"></div>
+    </section>
+
+    <section class="panel" id="tab-theory" hidden>
+      <div class="sect"><h2>Complexity classes, stated carefully</h2>
+      <p>Decision and optimisation versions are kept apart. The framework as a whole is not NP-Hard: only the combinatorial components below are, and the table says which.</p></div>
+      <div class="card"><div class="scroll"><table><thead><tr><th>Problem</th><th>Technique</th><th>Time</th><th>Space</th><th>Decision form</th><th>Optimisation form</th><th>Class</th></tr></thead><tbody id="classBody"></tbody></table></div></div>
+      <div class="sect"><h2>Gaps that led to new algorithms</h2>
+      <p>Each limitation below is something this app measures, and each one motivated a newer algorithm. <span id="gapEvidence" class="muted"></span></p></div>
+      <div class="card"><div class="scroll"><table><thead><tr><th>Gap in the syllabus algorithm</th><th>What was developed to close it</th><th>Evidence measured here</th></tr></thead><tbody id="gapBody"></tbody></table></div></div>
+    </section>
+
+    <section class="panel" id="tab-tests" hidden>
+      <div class="sect"><h2>Correctness checks</h2>
+      <p>Each structure and algorithm is checked against an independent method: sorted order, brute force, Bellman-Ford or exhaustive recursion.</p></div>
+      <div class="card"><ul class="tests" id="testList"></ul></div>
+    </section>
+  </main>
+  <p class="foot">Design and Analysis of Algorithms framework assignment. All data structures and algorithms are implemented from scratch in plain JavaScript.</p>
+</div>
+<script>
+/* Algorithm 2035 - advanced data structures (all hand-written, no libraries).
+   Every structure keeps an operation counter `st` so experiments can compare
+   measured work against the theoretical bound. */
+(function (g) {
+  'use strict';
+  const D = (g.DAA = g.DAA || {});
+
+  /* seeded PRNG (mulberry32) so every experiment is reproducible */
+  D.rng = function (seed) {
+    let s = seed >>> 0;
+    return function () {
+      s = (s + 0x6d2b79f5) >>> 0;
+      let t = s;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+
+  /* ------------------------------------------------------------------ */
+  /* Red-Black Tree: insert / search, CLRS-style with a NIL sentinel      */
+  /* ------------------------------------------------------------------ */
+  class RBTree {
+    constructor() {
+      this.NIL = { c: 0, l: null, r: null, p: null, k: null };
+      this.root = this.NIL;
+      this.st = { cmp: 0, visits: 0, rot: 0, recolor: 0, size: 0 };
+    }
+    _rotL(x) {
+      const y = x.r;
+      x.r = y.l;
+      if (y.l !== this.NIL) y.l.p = x;
+      y.p = x.p;
+      if (x.p === this.NIL) this.root = y;
+      else if (x === x.p.l) x.p.l = y;
+      else x.p.r = y;
+      y.l = x;
+      x.p = y;
+      this.st.rot++;
+    }
+    _rotR(x) {
+      const y = x.l;
+      x.l = y.r;
+      if (y.r !== this.NIL) y.r.p = x;
+      y.p = x.p;
+      if (x.p === this.NIL) this.root = y;
+      else if (x === x.p.r) x.p.r = y;
+      else x.p.l = y;
+      y.r = x;
+      x.p = y;
+      this.st.rot++;
+    }
+    insert(k, v) {
+      let y = this.NIL,
+        x = this.root;
+      while (x !== this.NIL) {
+        y = x;
+        this.st.visits++;
+        this.st.cmp++;
+        if (k === x.k) {
+          x.v = v;
+          return;
+        }
+        x = k < x.k ? x.l : x.r;
+      }
+      const z = { k, v, c: 1, l: this.NIL, r: this.NIL, p: y };
+      if (y === this.NIL) this.root = z;
+      else if (k < y.k) y.l = z;
+      else y.r = z;
+      this.st.size++;
+      this._fix(z);
+    }
+    _fix(z) {
+      const T = this;
+      while (z.p.c === 1) {
+        if (z.p === z.p.p.l) {
+          const u = z.p.p.r;
+          if (u.c === 1) {
+            z.p.c = 0;
+            u.c = 0;
+            z.p.p.c = 1;
+            T.st.recolor += 3;
+            z = z.p.p;
+          } else {
+            if (z === z.p.r) {
+              z = z.p;
+              T._rotL(z);
+            }
+            z.p.c = 0;
+            z.p.p.c = 1;
+            T.st.recolor += 2;
+            T._rotR(z.p.p);
+          }
+        } else {
+          const u = z.p.p.l;
+          if (u.c === 1) {
+            z.p.c = 0;
+            u.c = 0;
+            z.p.p.c = 1;
+            T.st.recolor += 3;
+            z = z.p.p;
+          } else {
+            if (z === z.p.l) {
+              z = z.p;
+              T._rotR(z);
+            }
+            z.p.c = 0;
+            z.p.p.c = 1;
+            T.st.recolor += 2;
+            T._rotL(z.p.p);
+          }
+        }
+      }
+      this.root.c = 0;
+    }
+    search(k) {
+      let x = this.root;
+      while (x !== this.NIL) {
+        this.st.visits++;
+        this.st.cmp++;
+        if (k === x.k) return x.v;
+        x = k < x.k ? x.l : x.r;
+      }
+      return undefined;
+    }
+    height() {
+      const h = (x) => (x === this.NIL ? 0 : 1 + Math.max(h(x.l), h(x.r)));
+      return h(this.root);
+    }
+    inorder() {
+      const out = [];
+      const f = (x) => {
+        if (x === this.NIL) return;
+        f(x.l);
+        out.push(x.k);
+        f(x.r);
+      };
+      f(this.root);
+      return out;
+    }
+    /* returns black-height, or -1 if any red-black rule is broken */
+    validate() {
+      if (this.root.c !== 0) return -1;
+      const f = (x) => {
+        if (x === this.NIL) return 1;
+        if (x.c === 1 && (x.l.c === 1 || x.r.c === 1)) return -1;
+        const a = f(x.l),
+          b = f(x.r);
+        if (a < 0 || b < 0 || a !== b) return -1;
+        return a + (x.c === 0 ? 1 : 0);
+      };
+      return f(this.root);
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* B-Tree of minimum degree t (node holds t-1 .. 2t-1 keys)            */
+  /* ------------------------------------------------------------------ */
+  class BTree {
+    constructor(t = 3) {
+      this.t = Math.max(2, t);
+      this.root = { leaf: true, keys: [], vals: [], ch: [] };
+      this.st = { cmp: 0, nodeReads: 0, splits: 0, size: 0 };
+    }
+    _peek(k) {
+      let x = this.root;
+      for (;;) {
+        let i = 0;
+        while (i < x.keys.length && k > x.keys[i]) i++;
+        if (i < x.keys.length && x.keys[i] === k) return [x, i];
+        if (x.leaf) return null;
+        x = x.ch[i];
+      }
+    }
+    search(k) {
+      let x = this.root;
+      for (;;) {
+        this.st.nodeReads++;
+        let i = 0;
+        while (i < x.keys.length && (this.st.cmp++, k > x.keys[i])) i++;
+        if (i < x.keys.length && x.keys[i] === k) return x.vals[i];
+        if (x.leaf) return undefined;
+        x = x.ch[i];
+      }
+    }
+    _split(x, i) {
+      const t = this.t,
+        y = x.ch[i];
+      const z = { leaf: y.leaf, keys: y.keys.splice(t), vals: y.vals.splice(t), ch: [] };
+      const mk = y.keys.pop(),
+        mv = y.vals.pop();
+      if (!y.leaf) z.ch = y.ch.splice(t);
+      x.keys.splice(i, 0, mk);
+      x.vals.splice(i, 0, mv);
+      x.ch.splice(i + 1, 0, z);
+      this.st.splits++;
+    }
+    insert(k, v) {
+      const hit = this._peek(k);
+      if (hit) {
+        hit[0].vals[hit[1]] = v;
+        return;
+      }
+      const r = this.root;
+      if (r.keys.length === 2 * this.t - 1) {
+        const s = { leaf: false, keys: [], vals: [], ch: [r] };
+        this.root = s;
+        this._split(s, 0);
+      }
+      let x = this.root;
+      for (;;) {
+        this.st.nodeReads++;
+        let i = x.keys.length - 1;
+        while (i >= 0 && (this.st.cmp++, k < x.keys[i])) i--;
+        if (x.leaf) {
+          x.keys.splice(i + 1, 0, k);
+          x.vals.splice(i + 1, 0, v);
+          this.st.size++;
+          return;
+        }
+        i++;
+        if (x.ch[i].keys.length === 2 * this.t - 1) {
+          this._split(x, i);
+          this.st.cmp++;
+          if (k > x.keys[i]) i++;
+        }
+        x = x.ch[i];
+      }
+    }
+    height() {
+      let h = 1,
+        x = this.root;
+      while (!x.leaf) {
+        x = x.ch[0];
+        h++;
+      }
+      return h;
+    }
+    inorder() {
+      const out = [];
+      const f = (x) => {
+        for (let i = 0; i < x.keys.length; i++) {
+          if (!x.leaf) f(x.ch[i]);
+          out.push(x.keys[i]);
+        }
+        if (!x.leaf) f(x.ch[x.keys.length]);
+      };
+      f(this.root);
+      return out;
+    }
+    /* all leaves same depth and key-count bounds respected */
+    validate() {
+      const t = this.t;
+      let depth = -1,
+        ok = true;
+      const f = (x, d, isRoot) => {
+        if (x.keys.length > 2 * t - 1 || (!isRoot && x.keys.length < t - 1)) ok = false;
+        if (x.leaf) {
+          if (depth < 0) depth = d;
+          else if (depth !== d) ok = false;
+          return;
+        }
+        if (x.ch.length !== x.keys.length + 1) ok = false;
+        x.ch.forEach((c) => f(c, d + 1, false));
+      };
+      f(this.root, 0, true);
+      return ok;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Binomial Heap (roots stored by degree, like a binary counter)        */
+  /* ------------------------------------------------------------------ */
+  class BinomialHeap {
+    constructor() {
+      this.roots = [];
+      this.n = 0;
+      this.st = { cmp: 0, link: 0, swap: 0, cut: 0 };
+    }
+    get work() {
+      const s = this.st;
+      return s.cmp + s.link + s.swap + s.cut;
+    }
+    _mk(it) {
+      const nd = { it, ch: [], p: null };
+      it.node = nd;
+      return nd;
+    }
+    _link(a, b) {
+      this.st.cmp++;
+      if (b.it.key < a.it.key) {
+        const t = a;
+        a = b;
+        b = t;
+      }
+      b.p = a;
+      a.ch.push(b);
+      this.st.link++;
+      return a;
+    }
+    _add(t, roots) {
+      t.p = null;
+      let d = t.ch.length;
+      while (roots[d]) {
+        t = this._link(roots[d], t);
+        roots[d] = null;
+        d++;
+      }
+      roots[d] = t;
+    }
+    insert(key, val) {
+      const it = { key, val };
+      this._add(this._mk(it), this.roots);
+      this.n++;
+      return it;
+    }
+    merge(o) {
+      for (const t of o.roots) if (t) this._add(t, this.roots);
+      this.n += o.n;
+      o.roots = [];
+      o.n = 0;
+    }
+    _minIdx() {
+      let m = -1;
+      for (let i = 0; i < this.roots.length; i++) {
+        const r = this.roots[i];
+        if (!r) continue;
+        if (m < 0) m = i;
+        else {
+          this.st.cmp++;
+          if (r.it.key < this.roots[m].it.key) m = i;
+        }
+      }
+      return m;
+    }
+    min() {
+      const m = this._minIdx();
+      return m < 0 ? null : this.roots[m].it;
+    }
+    extractMin() {
+      const m = this._minIdx();
+      if (m < 0) return null;
+      const t = this.roots[m];
+      this.roots[m] = null;
+      for (const c of t.ch) this._add(c, this.roots);
+      this.n--;
+      while (this.roots.length && !this.roots[this.roots.length - 1]) this.roots.pop();
+      return t.it;
+    }
+    decreaseKey(it, k) {
+      it.key = k;
+      let x = it.node;
+      while (x.p) {
+        this.st.cmp++;
+        if (x.it.key < x.p.it.key) {
+          const a = x.it,
+            b = x.p.it;
+          x.it = b;
+          x.p.it = a;
+          b.node = x;
+          a.node = x.p;
+          x = x.p;
+          this.st.swap++;
+        } else break;
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Fibonacci Heap: lazy insert/merge, consolidate on extract-min,       */
+  /* cut + cascading cut on decrease-key                                  */
+  /* ------------------------------------------------------------------ */
+  class FibHeap {
+    constructor() {
+      this.roots = new Set();
+      this.min = null;
+      this.n = 0;
+      this.st = { cmp: 0, link: 0, swap: 0, cut: 0 };
+    }
+    get work() {
+      const s = this.st;
+      return s.cmp + s.link + s.swap + s.cut;
+    }
+    insert(key, val) {
+      const it = { key, val };
+      const nd = { it, ch: new Set(), p: null, mark: false, deg: 0 };
+      it.node = nd;
+      this.roots.add(nd);
+      this.st.cmp++;
+      if (!this.min || key < this.min.it.key) this.min = nd;
+      this.n++;
+      return it;
+    }
+    merge(o) {
+      for (const r of o.roots) this.roots.add(r);
+      this.st.cmp++;
+      if (!this.min || (o.min && o.min.it.key < this.min.it.key)) this.min = o.min || this.min;
+      this.n += o.n;
+      o.roots = new Set();
+      o.min = null;
+      o.n = 0;
+    }
+    extractMin() {
+      const z = this.min;
+      if (!z) return null;
+      for (const c of z.ch) {
+        c.p = null;
+        c.mark = false;
+        this.roots.add(c);
+      }
+      this.roots.delete(z);
+      this.n--;
+      if (this.roots.size === 0) this.min = null;
+      else this._consolidate();
+      return z.it;
+    }
+    _consolidate() {
+      const A = [];
+      for (const w of [...this.roots]) {
+        let x = w,
+          d = x.deg;
+        while (A[d]) {
+          let y = A[d];
+          this.st.cmp++;
+          if (y.it.key < x.it.key) {
+            const t = x;
+            x = y;
+            y = t;
+          }
+          this.roots.delete(y);
+          y.p = x;
+          y.mark = false;
+          x.ch.add(y);
+          x.deg++;
+          this.st.link++;
+          A[d] = null;
+          d++;
+        }
+        A[d] = x;
+      }
+      this.min = null;
+      for (const r of A) {
+        if (!r) continue;
+        this.st.cmp++;
+        if (!this.min || r.it.key < this.min.it.key) this.min = r;
+      }
+    }
+    _cut(x, y) {
+      y.ch.delete(x);
+      y.deg--;
+      x.p = null;
+      x.mark = false;
+      this.roots.add(x);
+      this.st.cut++;
+    }
+    decreaseKey(it, k) {
+      it.key = k;
+      const x = it.node,
+        y = x.p;
+      if (y) {
+        this.st.cmp++;
+        if (x.it.key < y.it.key) {
+          this._cut(x, y);
+          let c = y;
+          while (c.p) {
+            if (!c.mark) {
+              c.mark = true;
+              break;
+            }
+            const z = c.p;
+            this._cut(c, z);
+            c = z;
+          }
+        }
+      }
+      this.st.cmp++;
+      if (x.it.key < this.min.it.key) this.min = x;
+    }
+  }
+
+  D.RBTree = RBTree;
+  D.BTree = BTree;
+  D.BinomialHeap = BinomialHeap;
+  D.FibHeap = FibHeap;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* Algorithm 2035 - syllabus algorithms. Each returns its answer together with
+   operation counters (ops / states / pruned) used by the experiment lab. */
+(function (g) {
+  'use strict';
+  const D = (g.DAA = g.DAA || {});
+  const INF = Infinity;
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  D.now = now;
+  D.timed = (fn) => {
+    const t = now();
+    const r = fn();
+    return [r, now() - t];
+  };
+
+  /* ---------------- parsing helpers ---------------- */
+  D.parseEdges = function (text, directed) {
+    const names = [],
+      idx = new Map(),
+      edges = [];
+    const id = (n) => {
+      if (!idx.has(n)) {
+        idx.set(n, names.length);
+        names.push(n);
+      }
+      return idx.get(n);
+    };
+    for (const raw of String(text).split(/\n|;/)) {
+      const line = raw.replace(/#.*/, '').trim();
+      if (!line) continue;
+      const p = line.split(/[\s,]+/);
+      if (p.length < 2) throw new Error('Bad link "' + line + '". Use: siteA siteB cost');
+      const w = p.length >= 3 ? Number(p[2]) : 1;
+      if (!isFinite(w)) throw new Error('Cost is not a number in "' + line + '"');
+      edges.push({ u: id(p[0]), v: id(p[1]), w });
+    }
+    return { names, n: names.length, edges, directed: !!directed };
+  };
+  D.parseNumbers = (text) =>
+    String(text)
+      .split(/[\s,;]+/)
+      .filter(Boolean)
+      .map((x) => {
+        const v = Number(x);
+        if (!isFinite(v)) throw new Error('"' + x + '" is not a number');
+        return v;
+      });
+  D.parseItems = function (text) {
+    const items = [];
+    for (const raw of String(text).split(/\n|;/)) {
+      const line = raw.replace(/#.*/, '').trim();
+      if (!line) continue;
+      const p = line.split(/[\s,]+/);
+      if (p.length < 3) throw new Error('Bad item "' + line + '". Use: name value weight');
+      const value = Number(p[1]),
+        weight = Number(p[2]);
+      if (!isFinite(value) || !isFinite(weight) || weight <= 0 || value < 0)
+        throw new Error('Value must be >= 0 and weight > 0 in "' + line + '"');
+      items.push({ name: p[0], value, weight });
+    }
+    if (!items.length) throw new Error('No items given');
+    return items;
+  };
+
+  function toMatrix(g, directed) {
+    const n = g.n;
+    const M = Array.from({ length: n }, (_, i) => {
+      const r = new Array(n).fill(INF);
+      r[i] = 0;
+      return r;
+    });
+    for (const e of g.edges) {
+      if (e.u === e.v) continue;
+      if (e.w < M[e.u][e.v]) M[e.u][e.v] = e.w;
+      if (!directed && e.w < M[e.v][e.u]) M[e.v][e.u] = e.w;
+    }
+    return M;
+  }
+  D.toMatrix = toMatrix;
+
+  /* ---------------- Minimum spanning tree ---------------- */
+  D.prim = function (g) {
+    const n = g.n;
+    if (n === 0) return { connected: true, edges: [], total: 0, ops: 0 };
+    const W = toMatrix(g, false);
+    const inT = new Array(n).fill(false),
+      key = new Array(n).fill(INF),
+      par = new Array(n).fill(-1);
+    key[0] = 0;
+    let ops = 0,
+      total = 0;
+    const edges = [];
+    for (let it = 0; it < n; it++) {
+      let u = -1;
+      for (let v = 0; v < n; v++) {
+        ops++;
+        if (!inT[v] && (u < 0 || key[v] < key[u])) u = v;
+      }
+      if (key[u] === INF) return { connected: false, edges, total, ops };
+      inT[u] = true;
+      if (par[u] >= 0) {
+        edges.push([par[u], u, key[u]]);
+        total += key[u];
+      }
+      for (let v = 0; v < n; v++) {
+        ops++;
+        if (!inT[v] && W[u][v] < key[v]) {
+          key[v] = W[u][v];
+          par[v] = u;
+        }
+      }
+    }
+    return { connected: true, edges, total, ops };
+  };
+
+  D.kruskal = function (g) {
+    const n = g.n;
+    const E = g.edges.filter((e) => e.u !== e.v).map((e) => [e.u, e.v, e.w]);
+    let cmp = 0,
+      finds = 0;
+    E.sort((a, b) => {
+      cmp++;
+      return a[2] - b[2];
+    });
+    const par = [...Array(n).keys()];
+    const find = (x) => {
+      while (par[x] !== x) {
+        finds++;
+        par[x] = par[par[x]];
+        x = par[x];
+      }
+      return x;
+    };
+    const rank = new Array(n).fill(0);
+    const edges = [];
+    let total = 0;
+    for (const [u, v, w] of E) {
+      const a = find(u),
+        b = find(v);
+      if (a === b) continue;
+      if (rank[a] < rank[b]) par[a] = b;
+      else if (rank[a] > rank[b]) par[b] = a;
+      else {
+        par[b] = a;
+        rank[a]++;
+      }
+      edges.push([u, v, w]);
+      total += w;
+      if (edges.length === n - 1) break;
+    }
+    return { connected: edges.length === Math.max(0, n - 1), edges, total, ops: cmp + finds };
+  };
+
+  /* ---------------- Floyd-Warshall ---------------- */
+  D.fwMatrix = function (d) {
+    const n = d.length;
+    const nx = Array.from({ length: n }, (_, i) =>
+      Array.from({ length: n }, (_, j) => (i !== j && d[i][j] < INF ? j : -1))
+    );
+    let ops = 0;
+    for (let k = 0; k < n; k++) {
+      const dk = d[k];
+      for (let i = 0; i < n; i++) {
+        const di = d[i],
+          dik = di[k];
+        ops += n;
+        if (dik === INF) continue;
+        for (let j = 0; j < n; j++) {
+          const alt = dik + dk[j];
+          if (alt < di[j]) {
+            di[j] = alt;
+            nx[i][j] = nx[i][k];
+          }
+        }
+      }
+    }
+    let negCycle = false;
+    for (let i = 0; i < n; i++) if (d[i][i] < 0) negCycle = true;
+    return { d, next: nx, ops, negCycle };
+  };
+  D.floydWarshall = function (g) {
+    return D.fwMatrix(toMatrix(g, g.directed));
+  };
+  D.fwPath = function (fw, i, j) {
+    if (fw.d[i][j] === INF || fw.negCycle) return null;
+    const p = [i];
+    let guard = 0;
+    while (i !== j && guard++ <= fw.d.length) {
+      i = fw.next[i][j];
+      if (i < 0) return null;
+      p.push(i);
+    }
+    return p;
+  };
+
+  /* ---------------- Knapsacks ---------------- */
+  function scaleInts(vals) {
+    let k = 0;
+    for (const v of vals) {
+      const s = String(v);
+      if (s.includes('.')) k = Math.max(k, s.split('.')[1].length);
+    }
+    k = Math.min(k, 3);
+    const f = Math.pow(10, k);
+    return vals.map((v) => Math.max(0, Math.round(v * f)));
+  }
+  const ratio = (it) => (it.weight === 0 ? INF : it.value / it.weight);
+
+  D.knapFractional = function (items, W) {
+    let cmp = 0;
+    const order = items
+      .map((_, i) => i)
+      .sort((a, b) => {
+        cmp++;
+        return ratio(items[b]) - ratio(items[a]);
+      });
+    let rem = W,
+      value = 0;
+    const picks = [];
+    for (const i of order) {
+      if (rem <= 0) break;
+      const it = items[i];
+      const f = Math.min(1, rem / it.weight);
+      picks.push({ name: it.name, fraction: f, value: f * it.value, weight: f * it.weight });
+      value += f * it.value;
+      rem -= f * it.weight;
+    }
+    return { value, picks, ops: cmp + order.length, used: W - Math.max(0, rem) };
+  };
+
+  D.knap01 = function (items, W, maxCells) {
+    maxCells = maxCells || 4e7;
+    const sc = scaleInts([...items.map((i) => i.weight), W]);
+    const C = sc[sc.length - 1];
+    const w = sc.slice(0, -1).map((x) => Math.max(1, x));
+    const n = items.length;
+    if (n * (C + 1) > maxCells)
+      throw new Error(
+        'DP table would need ' + (n * (C + 1)).toLocaleString() + ' cells (n x capacity). This is the pseudo-polynomial limit of 0/1 Knapsack.'
+      );
+    const dp = new Float64Array(C + 1);
+    const take = new Uint8Array(n * (C + 1));
+    let ops = 0;
+    for (let i = 0; i < n; i++) {
+      for (let c = C; c >= w[i]; c--) {
+        ops++;
+        const v = dp[c - w[i]] + items[i].value;
+        if (v > dp[c]) {
+          dp[c] = v;
+          take[i * (C + 1) + c] = 1;
+        }
+      }
+    }
+    let c = C;
+    const chosen = [];
+    for (let i = n - 1; i >= 0; i--) {
+      if (take[i * (C + 1) + c]) {
+        chosen.push(items[i]);
+        c -= w[i];
+      }
+    }
+    chosen.reverse();
+    return {
+      value: dp[C],
+      chosen,
+      weight: chosen.reduce((s, x) => s + x.weight, 0),
+      ops,
+      cells: n * (C + 1),
+      capacityUnits: C,
+    };
+  };
+
+  /* greedy by value/weight - optimal for fractional, NOT for 0/1 */
+  D.knapGreedy01 = function (items, W) {
+    const order = items.map((_, i) => i).sort((a, b) => ratio(items[b]) - ratio(items[a]));
+    let rem = W,
+      value = 0;
+    const chosen = [];
+    for (const i of order) {
+      if (items[i].weight <= rem) {
+        chosen.push(items[i]);
+        rem -= items[i].weight;
+        value += items[i].value;
+      }
+    }
+    return { value, chosen };
+  };
+
+  /* ---------------- Matrix Chain Multiplication ---------------- */
+  D.mcm = function (p) {
+    const n = p.length - 1;
+    if (n < 1) throw new Error('Need at least two dimensions (one matrix)');
+    const m = Array.from({ length: n + 1 }, () => new Float64Array(n + 1));
+    const s = Array.from({ length: n + 1 }, () => new Int32Array(n + 1));
+    let ops = 0;
+    for (let len = 2; len <= n; len++) {
+      for (let i = 1; i + len - 1 <= n; i++) {
+        const j = i + len - 1;
+        m[i][j] = INF;
+        for (let k = i; k < j; k++) {
+          ops++;
+          const q = m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j];
+          if (q < m[i][j]) {
+            m[i][j] = q;
+            s[i][j] = k;
+          }
+        }
+      }
+    }
+    const paren = (i, j) => (i === j ? 'A' + i : '(' + paren(i, s[i][j]) + ' x ' + paren(s[i][j] + 1, j) + ')');
+    let ltr = 0,
+      rtl = 0;
+    for (let t = 2; t <= n; t++) ltr += p[0] * p[t - 1] * p[t];
+    for (let t = 1; t < n; t++) rtl += p[t - 1] * p[t] * p[n];
+    return { n, cost: n === 1 ? 0 : m[1][n], paren: paren(1, n), leftToRight: ltr, rightToLeft: rtl, ops };
+  };
+
+  /* ---------------- Hamiltonian path / cycle (backtracking) ---------------- */
+  D.hamiltonian = function (g, mode, budget) {
+    budget = budget || 5e6;
+    const n = g.n;
+    const A = toMatrix(g, g.directed).map((r) => r.map((x) => x < INF));
+    let states = 0,
+      backtracks = 0,
+      found = null,
+      exhausted = false;
+    const path = [],
+      vis = new Array(n).fill(false);
+    function rec() {
+      states++;
+      if (states > budget) {
+        exhausted = true;
+        return true;
+      }
+      if (path.length === n) {
+        if (mode === 'path' || A[path[n - 1]][path[0]]) {
+          found = path.slice();
+          return true;
+        }
+        backtracks++;
+        return false;
+      }
+      const last = path[path.length - 1];
+      for (let v = 0; v < n; v++) {
+        if (!vis[v] && A[last][v]) {
+          vis[v] = true;
+          path.push(v);
+          if (rec()) return true;
+          path.pop();
+          vis[v] = false;
+        }
+      }
+      backtracks++;
+      return false;
+    }
+    if (n === 0 || (mode === 'cycle' && n < 3)) return { found: null, states: 0, backtracks: 0, exhausted: false, mode };
+    const starts = mode === 'cycle' ? [0] : [...Array(n).keys()];
+    for (const s0 of starts) {
+      path.length = 0;
+      vis.fill(false);
+      path.push(s0);
+      vis[s0] = true;
+      if (rec()) break;
+    }
+    return { found, states, backtracks, exhausted, mode };
+  };
+
+  /* ---------------- N-Queen style conflict-free placement ---------------- */
+  D.nqueens = function (n, stopAtFirst) {
+    const cols = new Array(n).fill(false),
+      d1 = new Array(2 * n).fill(false),
+      d2 = new Array(2 * n).fill(false);
+    const pos = [];
+    let nodes = 0,
+      solutions = 0,
+      first = null,
+      nodesToFirst = 0,
+      pruned = 0,
+      done = false;
+    function rec(r) {
+      nodes++;
+      if (r === n) {
+        solutions++;
+        if (!first) {
+          first = pos.slice();
+          nodesToFirst = nodes;
+        }
+        if (stopAtFirst) done = true;
+        return;
+      }
+      for (let c = 0; c < n && !done; c++) {
+        if (cols[c] || d1[r + c] || d2[r - c + n - 1]) {
+          pruned++;
+          continue;
+        }
+        cols[c] = d1[r + c] = d2[r - c + n - 1] = true;
+        pos[r] = c;
+        rec(r + 1);
+        cols[c] = d1[r + c] = d2[r - c + n - 1] = false;
+      }
+    }
+    rec(0);
+    return { n, solutions, first, nodes, nodesToFirst, pruned };
+  };
+
+  /* ---------------- Travelling Salesperson ---------------- */
+  /* complete distance matrix from a link list; missing links are filled by
+     Floyd-Warshall (shortest connection), which is flagged to the caller */
+  D.tspMatrix = function (g) {
+    const n = g.n;
+    const M = toMatrix(g, false);
+    let closure = false;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (i !== j && M[i][j] === INF) closure = true;
+    let fwOps = 0;
+    if (closure) fwOps = D.fwMatrix(M).ops;
+    let feasible = true;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (M[i][j] === INF) feasible = false;
+    return { D: M, closure, feasible, fwOps };
+  };
+
+  function minOut(Dm) {
+    const n = Dm.length;
+    return Dm.map((r, u) => {
+      let m = INF;
+      for (let v = 0; v < n; v++) if (v !== u && r[v] < m) m = r[v];
+      return m;
+    });
+  }
+
+  /* pure backtracking: explores the whole tree of partial tours */
+  D.tspBacktrack = function (Dm, budget) {
+    budget = budget || 3e7;
+    const n = Dm.length;
+    let best = INF,
+      bestPath = null,
+      nodes = 0,
+      exhausted = false;
+    const vis = new Array(n).fill(false),
+      path = [0];
+    vis[0] = true;
+    function rec(last, cnt, cost) {
+      if (exhausted) return;
+      nodes++;
+      if (nodes > budget) {
+        exhausted = true;
+        return;
+      }
+      if (cnt === n) {
+        const t = cost + Dm[last][0];
+        if (t < best) {
+          best = t;
+          bestPath = path.slice();
+        }
+        return;
+      }
+      for (let v = 1; v < n; v++) {
+        if (!vis[v]) {
+          vis[v] = true;
+          path.push(v);
+          rec(v, cnt + 1, cost + Dm[last][v]);
+          path.pop();
+          vis[v] = false;
+        }
+      }
+    }
+    if (n === 1) return { best: 0, path: [0], nodes: 1, pruned: 0, optimal: true, maxQueue: n };
+    rec(0, 1, 0);
+    return { best, path: bestPath, nodes, pruned: 0, optimal: !exhausted, maxQueue: n };
+  };
+
+  /* depth-first branch & bound with a min-edge lower bound */
+  D.tspBnBDFS = function (Dm, budget) {
+    budget = budget || 3e6;
+    const n = Dm.length;
+    const m1 = minOut(Dm);
+    let best = INF,
+      bestPath = null,
+      nodes = 0,
+      pruned = 0,
+      exhausted = false;
+    const vis = new Array(n).fill(false),
+      path = [0];
+    vis[0] = true;
+    let remMin = 0;
+    for (let u = 1; u < n; u++) remMin += m1[u];
+    function rec(last, cnt, cost) {
+      if (exhausted) return;
+      nodes++;
+      if (nodes > budget) {
+        exhausted = true;
+        return;
+      }
+      if (cnt === n) {
+        const t = cost + Dm[last][0];
+        if (t < best) {
+          best = t;
+          bestPath = path.slice();
+        }
+        return;
+      }
+      if (cost + m1[last] + remMin >= best) {
+        pruned++;
+        return;
+      }
+      const cand = [];
+      for (let v = 1; v < n; v++) if (!vis[v]) cand.push(v);
+      cand.sort((a, b) => Dm[last][a] - Dm[last][b]);
+      for (const v of cand) {
+        vis[v] = true;
+        path.push(v);
+        remMin -= m1[v];
+        rec(v, cnt + 1, cost + Dm[last][v]);
+        remMin += m1[v];
+        path.pop();
+        vis[v] = false;
+      }
+    }
+    if (n === 1) return { best: 0, path: [0], nodes: 1, pruned: 0, optimal: true, maxQueue: 1 };
+    rec(0, 1, 0);
+    return { best, path: bestPath, nodes, pruned, optimal: !exhausted, maxQueue: n };
+  };
+
+  /* best-first branch & bound whose frontier is a Binomial or Fibonacci heap */
+  D.tspBnBBestFirst = function (Dm, budget, HeapClass) {
+    budget = budget || 2e6;
+    HeapClass = HeapClass || D.BinomialHeap;
+    const n = Dm.length;
+    const m1 = minOut(Dm);
+    let totalMin = 0;
+    for (let u = 0; u < n; u++) totalMin += m1[u];
+    const heap = new HeapClass();
+    let best = INF,
+      bestPath = null,
+      nodes = 0,
+      pruned = 0,
+      maxQueue = 0,
+      exhausted = false;
+    if (n === 1) return { best: 0, path: [0], nodes: 1, pruned: 0, optimal: true, maxQueue: 1 };
+    // state: path, visited bitset (array), cost, remaining min-sum of unvisited
+    const root = { path: [0], vis: 1, cost: 0, rem: totalMin - m1[0] };
+    heap.insert(m1[0] + root.rem, root);
+    while (heap.n > 0) {
+      const it = heap.extractMin();
+      if (it.key >= best) {
+        pruned += heap.n;
+        break;
+      }
+      nodes++;
+      if (nodes > budget) {
+        exhausted = true;
+        break;
+      }
+      const s = it.val,
+        last = s.path[s.path.length - 1],
+        cnt = s.path.length;
+      for (let v = 1; v < n; v++) {
+        if (s.vis & (1 << v)) continue;
+        const cost2 = s.cost + Dm[last][v];
+        if (cnt + 1 === n) {
+          const t = cost2 + Dm[v][0];
+          if (t < best) {
+            best = t;
+            bestPath = [...s.path, v];
+          }
+          continue;
+        }
+        const rem2 = s.rem - m1[v];
+        const lb = cost2 + m1[v] + rem2;
+        if (lb < best) heap.insert(lb, { path: [...s.path, v], vis: s.vis | (1 << v), cost: cost2, rem: rem2 });
+        else pruned++;
+      }
+      if (heap.n > maxQueue) maxQueue = heap.n;
+    }
+    return { best, path: bestPath, nodes, pruned, optimal: !exhausted, maxQueue };
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* Algorithm 2035 - autonomous decision engine.
+   Pipeline: SCENARIO INPUT -> PROBLEM MODEL -> DAA CHOICE -> EXECUTION -> ANALYSIS -> EXPLANATION
+   The engine never receives an algorithm name. It receives a request made of
+   structure + properties + data, recognises the problem by rules over those
+   properties, then selects, runs and explains a syllabus technique. */
+(function (g) {
+  'use strict';
+  const D = (g.DAA = g.DAA || {});
+  const INF = Infinity;
+  const fmt = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-US', { maximumFractionDigits: 2 }) : String(x));
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, Number(x) || a));
+  const log2 = (x) => Math.log(Math.max(2, x)) / Math.LN2;
+
+  /* ------------------------------------------------------------------ */
+  /* 1. Problem recognition rules (properties only, never algorithm names) */
+  /* ------------------------------------------------------------------ */
+  const RULES = [
+    { id: 'R1', problem: 'ORDERED_SEARCH', when: 'data = keyed records that must be searched and updated in key order', test: (r) => r.structure === 'records' },
+    { id: 'R2', problem: 'DYNAMIC_PRIORITY', when: 'data = events whose priority changes over time', test: (r) => r.structure === 'events' },
+    { id: 'R3', problem: 'MST', when: 'data = weighted network AND goal = connect every node at minimum total cost', test: (r) => r.structure === 'network' && r.props.goal === 'connect-all' },
+    { id: 'R4', problem: 'APSP', when: 'data = weighted network AND goal = cost between every pair of nodes', test: (r) => r.structure === 'network' && r.props.goal === 'pair-costs' },
+    { id: 'R5', problem: 'KNAP_FRAC', when: 'data = items under one budget AND items can be split', test: (r) => r.structure === 'items' && !!r.props.divisible },
+    { id: 'R6', problem: 'KNAP_01', when: 'data = items under one budget AND items are all-or-nothing', test: (r) => r.structure === 'items' && !r.props.divisible },
+    { id: 'R7', problem: 'MCM', when: 'data = chain of matrices AND goal = cheapest evaluation order', test: (r) => r.structure === 'matrices' },
+    { id: 'R8', problem: 'HAMILTON', when: 'data = network AND goal = is there a route visiting every node exactly once', test: (r) => r.structure === 'network' && r.props.goal === 'visit-once' },
+    { id: 'R9', problem: 'NQUEEN', when: 'data = grid AND placed items conflict along row, column or diagonal', test: (r) => r.structure === 'grid' && r.props.conflict === 'line-of-sight' },
+    { id: 'R10', problem: 'TSP', when: 'data = weighted network AND goal = cheapest round trip through every node', test: (r) => r.structure === 'network' && r.props.goal === 'round-trip' },
+  ];
+  D.RULES = RULES;
+
+  const TITLES = {
+    ORDERED_SEARCH: 'Ordered searchable data',
+    DYNAMIC_PRIORITY: 'Mergeable / changing priorities',
+    MST: 'Minimum network connection',
+    APSP: 'All-pairs costs',
+    KNAP_FRAC: 'Divisible resource choice',
+    KNAP_01: 'Indivisible resource choice',
+    MCM: 'Optimal matrix evaluation order',
+    HAMILTON: 'Hamiltonian feasibility',
+    NQUEEN: 'Conflict-free placement',
+    TSP: 'Minimum complete tour',
+  };
+  D.TITLES = TITLES;
+
+  /* 10. complexity classification - decision vs optimisation kept separate */
+  const CLASS = {
+    ORDERED_SEARCH: { kind: 'P', label: 'Polynomial (logarithmic per operation)', decision: 'Is key k stored? Answered in O(log n).', optimization: 'No optimisation form.', note: 'Dictionary operations are cheap; no hardness involved.' },
+    DYNAMIC_PRIORITY: { kind: 'P', label: 'Polynomial (amortised logarithmic or better)', decision: 'What is the minimum key? O(1) with a pointer / O(log n) scan.', optimization: 'No optimisation form.', note: 'Priority-queue operations are low-polynomial. Fibonacci bounds are amortised, not worst-case per operation.' },
+    MST: { kind: 'P', label: 'Polynomial (P)', decision: 'Is there a spanning tree of cost <= k? In P.', optimization: 'Minimum spanning tree: Prim O(V^2) / Kruskal O(E log E). In P.', note: 'Greedy choice is provably safe (cut property), so no search is needed.' },
+    APSP: { kind: 'P', label: 'Polynomial (P)', decision: 'Is d(u,v) <= k? In P.', optimization: 'All-pairs shortest paths: Floyd-Warshall O(V^3), in P. Caveat: with negative cycles the shortest SIMPLE path problem becomes NP-Hard.', note: 'The cubic cost is the limit here, not hardness.' },
+    KNAP_FRAC: { kind: 'P', label: 'Polynomial (P)', decision: 'Is value >= V reachable within weight W? In P when items are divisible.', optimization: 'Fractional Knapsack: greedy O(n log n). In P.', note: 'Divisibility turns an NP-Hard problem into a greedy one.' },
+    KNAP_01: { kind: 'pseudo', label: 'NP-Hard (optimisation) / NP-Complete (decision) - DP is pseudo-polynomial', decision: 'Is there a subset with value >= V and weight <= W? NP-Complete.', optimization: 'Maximise value: NP-Hard. The O(nW) DP is pseudo-polynomial: W is encoded in log W bits, so the DP is exponential in the input length.', note: 'Practical for modest W, but the table grows with the numeric value of W, not with the number of bits needed to write it.' },
+    MCM: { kind: 'P', label: 'Polynomial (P)', decision: 'Is there an order with <= k scalar multiplications? In P.', optimization: 'Matrix-chain order: DP O(n^3) time, O(n^2) space. In P (an O(n log n) algorithm exists, outside this syllabus).', note: 'There are Catalan-many orders, but optimal substructure avoids enumerating them.' },
+    HAMILTON: { kind: 'NPC', label: 'NP-Complete (decision form)', decision: 'Does a Hamiltonian cycle / path exist? NP-Complete.', optimization: 'No optimisation form as stated. Adding edge weights and asking for the cheapest cycle gives TSP (NP-Hard).', note: 'Backtracking is exponential in the worst case: O(n!) states.' },
+    NQUEEN: { kind: 'other', label: 'Standard N-Queen is NOT labelled NP-Complete', decision: 'Does a solution exist for n x n? Yes for every n >= 4, and one can be built in O(n) by formula.', optimization: 'No optimisation form. Counting all solutions is expensive but that is enumeration, not NP-completeness.', note: 'A related variant, completing a partially filled board, is known to be NP-Complete. The plain board used here is not.' },
+    TSP: { kind: 'NPH', label: 'NP-Hard (optimisation) / NP-Complete (decision)', decision: 'Is there a tour of cost <= k? NP-Complete.', optimization: 'Find the cheapest tour: NP-Hard.', note: 'Exact methods are exponential: (n-1)!/2 tours, or O(n^2 2^n) with Held-Karp. Pruning helps in practice, not in the worst case.' },
+  };
+  D.CLASS = CLASS;
+
+  D.recognise = function (req) {
+    const trace = RULES.map((r) => ({ id: r.id, when: r.when, fired: !!r.test(req), problem: r.problem }));
+    const hit = trace.find((t) => t.fired);
+    return { trace, problem: hit ? hit.problem : null, rule: hit ? hit.id : null };
+  };
+
+  /* ------------------------------------------------------------------ */
+  /* helpers for result blocks                                           */
+  /* ------------------------------------------------------------------ */
+  const kv = (title, items) => ({ type: 'kv', title, items });
+  const table = (title, head, rows, hl) => ({ type: 'table', title, head, rows, hl });
+  const text = (title, html) => ({ type: 'text', title, html });
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const names = (gph, idxs) => idxs.map((i) => gph.names[i]).join(' \u2192 ');
+
+  function catalan(k) {
+    let c = 1n;
+    for (let i = 0; i < k; i++) c = (c * BigInt(2 * (2 * i + 1))) / BigInt(i + 2);
+    return c;
+  }
+  const big = (b) => (b.toString().length > 18 ? b.toString()[0] + '.' + b.toString().slice(1, 4) + ' x 10^' + (b.toString().length - 1) : b.toLocaleString('en-US'));
+  function binom(nn, kk) {
+    let r = 1n;
+    for (let i = 1n; i <= BigInt(kk); i++) r = (r * (BigInt(nn) - BigInt(kk) + i)) / i;
+    return r;
+  }
+  function factorial(n) {
+    let r = 1n;
+    for (let i = 2n; i <= BigInt(n); i++) r *= i;
+    return r;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 2. Solvers: each does   model -> select -> execute -> explain        */
+  /* ------------------------------------------------------------------ */
+  const SOLVERS = {};
+
+  /* ---- ordered searchable data: B-Tree vs Red-Black Tree ---- */
+  SOLVERS.ORDERED_SEARCH = function (req) {
+    const p = req.props;
+    const n = clamp(p.records, 200, 150000),
+      cap = clamp(p.blockCapacity || 64, 3, 1024);
+    const t = Math.max(2, Math.floor((cap + 1) / 2));
+    const r = D.rng(11);
+    const set = new Set();
+    while (set.size < n) set.add(Math.floor(r() * n * 20));
+    const keys = [...set];
+    const q = n;
+    const lookups = [];
+    for (let i = 0; i < q; i++) lookups.push(r() < 0.8 ? keys[Math.floor(r() * n)] : -1 - i);
+
+    const rb = new D.RBTree(),
+      bt = new D.BTree(t);
+    const [, rbInsMs] = D.timed(() => keys.forEach((k, i) => rb.insert(k, i)));
+    const rbI = { ...rb.st };
+    const [, rbSeaMs] = D.timed(() => lookups.forEach((k) => rb.search(k)));
+    const rbS = { visits: rb.st.visits - rbI.visits, cmp: rb.st.cmp - rbI.cmp };
+    const [, btInsMs] = D.timed(() => keys.forEach((k, i) => bt.insert(k, i)));
+    const btI = { ...bt.st };
+    const [, btSeaMs] = D.timed(() => lookups.forEach((k) => bt.search(k)));
+    const btS = { visits: bt.st.nodeReads - btI.nodeReads, cmp: bt.st.cmp - btI.cmp };
+    const rbH = rb.height(),
+      btH = bt.height();
+
+    const disk = p.residency === 'disk';
+    const chosen = disk ? 'B-Tree' : 'Red-Black Tree';
+    const reasons = disk
+      ? [
+          'Records live in disk blocks, so the cost that matters is node accesses: one node = one block read.',
+          'A B-Tree packs up to ' + (2 * t - 1) + ' keys per block, so its height is ' + btH + ' against ' + rbH + ' for the Red-Black Tree.',
+          'Measured: ' + fmt(btS.visits) + ' block reads for ' + fmt(q) + ' lookups with the B-Tree vs ' + fmt(rbS.visits) + ' with the Red-Black Tree (' + (rbS.visits / btS.visits).toFixed(1) + 'x more).',
+        ]
+      : [
+          'Records fit in memory, so the cost that matters is comparisons and pointer hops, not block reads.',
+          'A Red-Black Tree uses small binary nodes, at most 2 rotations per insert, and never scans or shifts keys inside a wide node.',
+          'Measured: ' + fmt(rbS.cmp) + ' comparisons for ' + fmt(q) + ' lookups (Red-Black) vs ' + fmt(btS.cmp) + ' (B-Tree), with ' + fmt(rb.st.rot) + ' rotations in total for ' + fmt(n) + ' inserts.',
+        ];
+    const rejected = disk
+      ? [{ name: 'Red-Black Tree', reason: 'Binary nodes scatter across blocks: about ' + rbH + ' block reads per lookup instead of ' + btH + '.' }]
+      : [{ name: 'B-Tree', reason: 'Wide nodes only pay off when a node access is expensive (disk). In memory they add in-node scanning and key shifting for no gain.' }];
+    return {
+      model: fmt(n) + ' unique integer keys, ' + fmt(q) + ' lookups (80% hits), ' + (disk ? 'block-resident' : 'memory-resident') + ', ' + cap + ' keys per block',
+      choice: { name: chosen, reasons },
+      rejected,
+      complexity: {
+        time: chosen === 'B-Tree' ? 'Search/insert: O(log_t n) node reads, O(t log_t n) = O(log n) comparisons' : 'Search/insert/rebalance: O(log n) worst case, at most 2 rotations per insert',
+        space: 'O(n) for both structures',
+      },
+      blocks: [
+        table('Measured on the same workload', ['Metric', 'Red-Black Tree', 'B-Tree (t=' + t + ')'], [
+          ['Height', rbH, btH],
+          ['Node accesses, ' + fmt(n) + ' inserts', fmt(rbI.visits), fmt(btI.nodeReads)],
+          ['Node accesses, ' + fmt(q) + ' lookups', fmt(rbS.visits), fmt(btS.visits)],
+          ['Key comparisons (inserts + lookups)', fmt(rbI.cmp + rbS.cmp), fmt(btI.cmp + btS.cmp)],
+          ['Rebalancing work', fmt(rb.st.rot) + ' rotations, ' + fmt(rb.st.recolor) + ' recolours', fmt(bt.st.splits) + ' node splits'],
+          ['Wall time (ms)', (rbInsMs + rbSeaMs).toFixed(1), (btInsMs + btSeaMs).toFixed(1)],
+        ], disk ? 2 : 1),
+      ],
+      warnings: [],
+    };
+  };
+
+  /* ---- dynamic priorities: Binomial Heap vs Fibonacci Heap ---- */
+  function runHeapWorkload(HeapClass, p) {
+    const n = clamp(p.events, 100, 40000),
+      share = clamp(p.decreaseShare, 0, 100) / 100;
+    const r = D.rng(5);
+    const h = new HeapClass();
+    const live = [];
+    const cost = { ins: 0, dec: 0, ext: 0, mrg: 0 },
+      cnt = { ins: 0, dec: 0, ext: 0, mrg: 0 };
+    let w = h.work;
+    const lap = (k) => {
+      const x = h.work;
+      cost[k] += x - w;
+      w = x;
+      cnt[k]++;
+    };
+    const add = (it) => {
+      it.pos = live.length;
+      live.push(it);
+    };
+    for (let i = 0; i < n; i++) {
+      add(h.insert(1000 + r() * 1e6, i));
+      lap('ins');
+    }
+    let minSeen = 1000;
+    const M = 2 * n;
+    for (let op = 0; op < M; op++) {
+      if (r() < share && live.length) {
+        const it = live[Math.floor(r() * live.length)];
+        minSeen -= 1 + r() * 10; /* an escalation: the event jumps to the front of the queue */
+        h.decreaseKey(it, minSeen);
+        lap('dec');
+      } else if (h.n > 0) {
+        const it = h.extractMin();
+        lap('ext');
+        const last = live.pop();
+        if (last !== it) {
+          live[it.pos] = last;
+          last.pos = it.pos;
+        }
+      }
+    }
+    if (p.merge) {
+      const h2 = new HeapClass();
+      for (let i = 0; i < Math.floor(n / 2); i++) h2.insert(2e6 + r() * 1e6, i);
+      const before = h.work;
+      h.merge(h2);
+      cost.mrg += h.work - before;
+      cnt.mrg++;
+      w = h.work;
+    }
+    while (h.n > 0) {
+      h.extractMin();
+      lap('ext');
+    }
+    return { cost, cnt, total: cost.ins + cost.dec + cost.ext + cost.mrg, st: { ...h.st } };
+  }
+  D.runHeapWorkload = runHeapWorkload;
+
+  SOLVERS.DYNAMIC_PRIORITY = function (req) {
+    const p = req.props;
+    const share = clamp(p.decreaseShare, 0, 100);
+    const bin = runHeapWorkload(D.BinomialHeap, p),
+      fib = runHeapWorkload(D.FibHeap, p);
+    let chosen, why;
+    if (p.realtime) {
+      chosen = 'Binomial Heap';
+      why = 'The workload needs a worst-case bound on every single operation. Binomial Heap guarantees O(log n) each; Fibonacci Heap bounds are amortised and one extract-min can take O(n).';
+    } else if (share >= 30 || (share >= 10 && p.merge)) {
+      chosen = 'Fibonacci Heap';
+      why = share >= 30 ? share + '% of operations are decrease-key. Fibonacci Heap does decrease-key in amortised O(1) (cut), Binomial Heap pays O(log n) swaps up the tree each time.' : 'Decrease-key is frequent (' + share + '%) and queues must be merged: Fibonacci Heap merges in O(1) and decreases in amortised O(1).';
+    } else {
+      chosen = 'Binomial Heap';
+      why = 'Only ' + share + '% of operations are decrease-key, so the Fibonacci advantage is small. Binomial Heap has lower constants, simple structure and worst-case O(log n) per operation.';
+    }
+    const isFib = chosen === 'Fibonacci Heap';
+    const pick = isFib ? fib : bin,
+      other = isFib ? bin : fib;
+    const reasons = [
+      why,
+      'Measured on this workload: ' + fmt(pick.total) + ' elementary steps for ' + chosen + ' vs ' + fmt(other.total) + ' for the alternative' + (pick.total <= other.total ? ' (' + (other.total / pick.total).toFixed(2) + 'x more).' : '. The alternative is cheaper here, which shows the rule is a trade-off, not a guarantee.'),
+    ];
+    const row = (label, k) => [label + ' (' + fmt(bin.cnt[k]) + ' ops)', fmt(bin.cost[k]), fmt(fib.cost[k])];
+    const rows = [row('Insert', 'ins'), row('Decrease-key', 'dec'), row('Extract-min', 'ext')];
+    if (p.merge) rows.push(['Merge (' + fmt(Math.floor(clamp(p.events, 100, 40000) / 2)) + ' items joined)', fmt(bin.cost.mrg), fmt(fib.cost.mrg)]);
+    rows.push(['Total elementary steps', fmt(bin.total), fmt(fib.total)]);
+    return {
+      model: fmt(clamp(p.events, 100, 40000)) + ' events, ' + share + '% of mixed operations are priority escalations' + (p.merge ? ', queues merged' : '') + (p.realtime ? ', hard real-time' : ''),
+      choice: { name: chosen, reasons },
+      rejected: [{ name: isFib ? 'Binomial Heap' : 'Fibonacci Heap', reason: isFib ? 'Decrease-key costs O(log n) swaps each; this is exactly the operation that dominates the workload.' : p.realtime ? 'Amortised bounds allow occasional very expensive operations, which a real-time system cannot accept.' : 'Lazy structure and cascading cuts carry higher constants and only pay off when decrease-key or merge dominate.' }],
+      complexity: {
+        time: isFib ? 'Insert O(1), merge O(1), decrease-key O(1) amortised, extract-min O(log n) amortised' : 'Insert O(1) amortised, merge O(log n), decrease-key O(log n), extract-min O(log n) worst case',
+        space: 'O(n)',
+      },
+      blocks: [table('Elementary steps (comparisons + links + swaps + cuts)', ['Operation', 'Binomial Heap', 'Fibonacci Heap'], rows, isFib ? 2 : 1)],
+      warnings: [],
+    };
+  };
+
+  /* ---- minimum network connection: Prim vs Kruskal ---- */
+  SOLVERS.MST = function (req) {
+    const gph = D.parseEdges(req.data.edges, false);
+    if (gph.n < 2) throw new Error('Give at least two sites and one link.');
+    const V = gph.n,
+      E = gph.edges.filter((e) => e.u !== e.v).length;
+    const maxE = (V * (V - 1)) / 2;
+    const density = E / maxE;
+    const estPrim = V * V * 2,
+      estKr = E * log2(E) + E * 2;
+    const choosePrim = estPrim <= estKr;
+    const [pr, pMs] = D.timed(() => D.prim(gph));
+    const [kr, kMs] = D.timed(() => D.kruskal(gph));
+    const win = choosePrim ? pr : kr;
+    const warnings = [];
+    if (!win.connected) warnings.push('The network is not connected, so no spanning tree exists. Showing the minimum spanning forest of the component(s) reached.');
+    if (pr.connected && kr.connected && Math.abs(pr.total - kr.total) > 1e-9) warnings.push('Internal check failed: Prim and Kruskal disagree.');
+    const chosen = choosePrim ? 'Prim (adjacency matrix)' : 'Kruskal (sort + union-find)';
+    const reasons = [
+      'Graph has ' + V + ' sites and ' + E + ' candidate links: density ' + (density * 100).toFixed(1) + '% of the ' + fmt(maxE) + ' possible links.',
+      'Cost model: Prim with a matrix ~ 2V^2 = ' + fmt(estPrim) + ' steps; Kruskal ~ E log2 E + 2E = ' + fmt(Math.round(estKr)) + ' steps. The ' + (choosePrim ? 'matrix-based Prim' : 'edge-sorting Kruskal') + ' estimate is lower.',
+      'Measured: Prim ' + fmt(pr.ops) + ' steps, Kruskal ' + fmt(kr.ops) + ' steps. Both give total cost ' + fmt(win.total) + '.',
+    ];
+    return {
+      model: 'Undirected weighted graph: V = ' + V + ', E = ' + E + ', density ' + (density * 100).toFixed(1) + '%',
+      choice: { name: chosen, reasons },
+      rejected: [
+        {
+          name: choosePrim ? 'Kruskal' : 'Prim (adjacency matrix)',
+          reason: choosePrim ? 'Sorting ' + fmt(E) + ' edges costs more than scanning a V x V matrix when the graph is dense.' : 'Scanning the V x V matrix costs V^2 regardless of how few links exist; Kruskal only touches the ' + fmt(E) + ' real links.',
+        },
+      ],
+      complexity: {
+        time: choosePrim ? 'Prim with matrix: O(V^2). (With a Fibonacci heap it would be O(E + V log V).)' : 'Kruskal: O(E log E) = O(E log V)',
+        space: choosePrim ? 'O(V^2) for the matrix' : 'O(V + E)',
+      },
+      blocks: [
+        kv('Network', [['Total cost of the spanning tree', fmt(win.total)], ['Links chosen', win.edges.length + ' of ' + (V - 1) + ' needed'], ['Prim and Kruskal agree', pr.total === kr.total ? 'yes' : 'no']]),
+        table('Cost estimate vs measurement', ['', 'Prim (matrix)', 'Kruskal'], [['Estimated steps', fmt(estPrim), fmt(Math.round(estKr))], ['Measured steps', fmt(pr.ops), fmt(kr.ops)], ['Wall time (ms)', pMs.toFixed(2), kMs.toFixed(2)]], choosePrim ? 1 : 2),
+        table('Links in the cheapest network' + (win.edges.length > 40 ? ' (first 40)' : ''), ['From', 'To', 'Cost'], win.edges.slice(0, 40).map((e) => [gph.names[e[0]], gph.names[e[1]], fmt(e[2])])),
+      ],
+      warnings,
+    };
+  };
+
+  /* ---- all-pairs costs: Floyd-Warshall ---- */
+  SOLVERS.APSP = function (req) {
+    const gph = D.parseEdges(req.data.edges, !!req.props.directed);
+    if (gph.n < 2) throw new Error('Give at least two zones and one link.');
+    const [fw, ms] = D.timed(() => D.floydWarshall(gph));
+    const V = gph.n;
+    const warnings = [];
+    if (fw.negCycle) warnings.push('A negative cycle exists, so shortest costs are not well defined for nodes on it.');
+    let unreachable = 0;
+    for (let i = 0; i < V; i++) for (let j = 0; j < V; j++) if (fw.d[i][j] === INF) unreachable++;
+    if (unreachable) warnings.push(unreachable + ' zone pair(s) cannot reach each other (shown as -).');
+    const blocks = [];
+    if (V <= 14)
+      blocks.push(table('All-pairs cost matrix (row = from, column = to)', [''].concat(gph.names), fw.d.map((row, i) => [gph.names[i]].concat(row.map((x) => (x === INF ? '-' : fmt(x)))))));
+    else blocks.push(text('Matrix', '<p>' + V + ' x ' + V + ' matrix computed (' + fmt(V * V) + ' entries); too large to print here.</p>'));
+    const samples = [];
+    for (let j = 1; j < V && samples.length < 5; j++) {
+      const pth = D.fwPath(fw, 0, j);
+      if (pth) samples.push([gph.names[0] + ' \u2192 ' + gph.names[j], fmt(fw.d[0][j]), names(gph, pth)]);
+    }
+    if (samples.length) blocks.push(table('Cheapest routes from ' + gph.names[0], ['Pair', 'Cost', 'Route'], samples));
+    blocks.push(kv('Scaling', [['Relaxations at V = ' + V, fmt(fw.ops)], ['If zones double (V = ' + 2 * V + ')', fmt(8 * fw.ops) + ' (8x)'], ['Wall time (ms)', ms.toFixed(2)]]));
+    return {
+      model: (gph.directed ? 'Directed' : 'Undirected') + ' weighted graph with ' + V + ' zones and ' + gph.edges.length + ' links; every pair of zones needs a cost',
+      choice: {
+        name: 'Floyd-Warshall',
+        reasons: [
+          'The goal is a cost for EVERY pair of zones, so a single answer table is needed, not one source or one tree.',
+          'Dynamic programming over intermediate zones fills the whole table in V^3 = ' + fmt(V * V * V) + ' relaxations and handles one-way links and negative costs.',
+        ],
+      },
+      rejected: [
+        { name: 'Prim / Kruskal', reason: 'A minimum spanning tree minimises the total cost of connecting everything, it does not give the cheapest route between two particular zones.' },
+        { name: 'Backtracking / TSP search', reason: 'They answer visit-all questions, which is a different (NP-Hard) problem.' },
+      ],
+      complexity: { time: 'O(V^3)', space: 'O(V^2)' },
+      blocks,
+      warnings,
+    };
+  };
+
+  /* ---- knapsack: Fractional (greedy) vs 0/1 (DP) ---- */
+  function knapSolver(req, divisible) {
+    const items = D.parseItems(req.data.items);
+    const W = Number(req.data.capacity);
+    if (!isFinite(W) || W <= 0) throw new Error('Budget / capacity must be a positive number.');
+    const fr = D.knapFractional(items, W);
+    const warnings = [];
+    let dp = null;
+    try {
+      dp = D.knap01(items, W);
+    } catch (e) {
+      warnings.push(e.message);
+    }
+    const gr = D.knapGreedy01(items, W);
+    const n = items.length;
+    const totalW = items.reduce((s, i) => s + i.weight, 0);
+    if (totalW <= W) warnings.push('Everything fits in the budget, so no selection is needed.');
+    const blocks = [];
+    if (divisible) {
+      blocks.push(table('Greedy by value per unit of weight', ['Item', 'Share taken', 'Value', 'Weight used'], fr.picks.map((x) => [x.name, (x.fraction * 100).toFixed(0) + '%', fmt(x.value), fmt(x.weight)])));
+      blocks.push(kv('Result', [['Total value', fmt(fr.value)], ['Budget used', fmt(fr.used) + ' of ' + fmt(W)], ['If the same items were all-or-nothing', dp ? fmt(dp.value) + ' (0/1 optimum)' : 'DP table too large']]));
+    } else if (dp) {
+      blocks.push(table('Chosen items (0/1)', ['Item', 'Value', 'Weight'], dp.chosen.map((x) => [x.name, fmt(x.value), fmt(x.weight)])));
+      blocks.push(kv('Result', [['Total value', fmt(dp.value)], ['Budget used', fmt(dp.weight) + ' of ' + fmt(W)], ['DP table', fmt(dp.cells) + ' cells (n x capacity)'], ['Greedy by ratio would give', fmt(gr.value) + (gr.value < dp.value ? ' (worse by ' + fmt(dp.value - gr.value) + ')' : ' (ties on this instance only)')], ['Fractional upper bound', fmt(fr.value)]]));
+    }
+    const nm = divisible ? 'Fractional Knapsack (greedy)' : '0/1 Knapsack (dynamic programming)';
+    const reasons = divisible
+      ? ['Items can be split, so taking the best value-per-weight first can never be improved on (exchange argument).', 'No table is needed: sort by ratio, then fill. ' + fmt(fr.ops) + ' steps for ' + n + ' items.']
+      : ['Items are all-or-nothing, so a locally best ratio can block a better combination.', dp ? (gr.value < dp.value ? 'Proof on this data: greedy-by-ratio gets ' + fmt(gr.value) + ' but the DP optimum is ' + fmt(dp.value) + '.' : 'Greedy happens to tie here, but nothing guarantees that; the DP always finds the optimum.') : 'The DP could not be built for this capacity (see warning).'];
+    return {
+      model: n + ' items (value, weight), budget ' + fmt(W) + ', items ' + (divisible ? 'divisible' : 'indivisible'),
+      choice: { name: nm, reasons },
+      rejected: divisible
+        ? [{ name: '0/1 Knapsack DP', reason: 'Would force whole items, so it gives a lower value' + (dp ? ' (' + fmt(dp.value) + ' vs ' + fmt(fr.value) + ')' : '') + ' and costs O(nW) instead of O(n log n).' }]
+        : [{ name: 'Fractional Knapsack (greedy)', reason: 'Splits items, which is not allowed here; its value ' + fmt(fr.value) + ' is only an upper bound and is not achievable.' }, { name: 'Greedy by ratio on whole items', reason: 'No optimality guarantee for 0/1 choices.' }, { name: 'Brute force over 2^n subsets', reason: '2^' + n + ' = ' + fmt(Math.pow(2, n)) + ' subsets; DP needs ' + (dp ? fmt(dp.cells) : 'n x W') + ' cells.' }],
+      complexity: divisible ? { time: 'O(n log n) (sorting dominates)', space: 'O(n)' } : { time: 'O(nW) - pseudo-polynomial', space: 'O(nW) with reconstruction (O(W) for the value only)' },
+      blocks,
+      warnings,
+    };
+  }
+  SOLVERS.KNAP_FRAC = (req) => knapSolver(req, true);
+  SOLVERS.KNAP_01 = (req) => knapSolver(req, false);
+
+  /* ---- matrix chain multiplication ---- */
+  SOLVERS.MCM = function (req) {
+    const p = D.parseNumbers(req.data.dims);
+    if (p.length < 3) throw new Error('Give at least three dimensions (two matrices), e.g. 10 30 5 60.');
+    if (p.some((x) => x <= 0 || !Number.isInteger(x))) throw new Error('Dimensions must be positive whole numbers.');
+    const [res, ms] = D.timed(() => D.mcm(p));
+    const best = Math.min(res.leftToRight, res.rightToLeft);
+    const saving = res.leftToRight > 0 ? (1 - res.cost / res.leftToRight) * 100 : 0;
+    const ord = res.n - 1 <= 60 ? big(catalan(res.n - 1)) : 'astronomically many';
+    return {
+      model: res.n + ' matrices A1..A' + res.n + ', dimensions ' + (p.length > 12 ? p.slice(0, 12).join(' x ') + ' ...' : p.join(' x ')) + '; operation count is the proxy for CPU load',
+      choice: {
+        name: 'Matrix Chain Multiplication (dynamic programming)',
+        reasons: [
+          'Multiplication is associative, so every bracketing gives the same matrix but a different scalar-multiplication count. There are ' + ord + ' bracketings.',
+          'Optimal substructure: the best order for A_i..A_j splits at some k into two best sub-chains, so a table over (i, j) replaces enumeration.',
+        ],
+      },
+      rejected: [
+        { name: 'Left-to-right order', reason: 'Costs ' + fmt(res.leftToRight) + ' scalar multiplications' + (res.leftToRight > res.cost ? ' (' + (res.leftToRight / res.cost).toFixed(2) + 'x the optimum).' : ' (happens to be optimal here).') },
+        { name: 'Try every bracketing', reason: ord + ' orders to evaluate.' },
+      ],
+      complexity: { time: 'O(n^3): ' + fmt(res.ops) + ' split evaluations for n = ' + res.n, space: 'O(n^2) cost and split tables' },
+      blocks: [
+        kv('Result', [['Best order', res.paren], ['Scalar multiplications (optimal)', fmt(res.cost)], ['Left-to-right', fmt(res.leftToRight)], ['Right-to-left', fmt(res.rightToLeft)], ['Work saved vs left-to-right', saving.toFixed(1) + '%'], ['Wall time (ms)', ms.toFixed(2)]]),
+      ],
+      warnings: [],
+    };
+  };
+
+  /* ---- Hamiltonian feasibility ---- */
+  SOLVERS.HAMILTON = function (req) {
+    const gph = D.parseEdges(req.data.edges, !!req.props.directed);
+    if (gph.n < 2) throw new Error('Give at least two sites and one link.');
+    const mode = req.props.visitMode === 'path' ? 'path' : 'cycle';
+    const [r, ms] = D.timed(() => D.hamiltonian(gph, mode, 5e6));
+    const warnings = [];
+    if (r.exhausted) warnings.push('Search stopped at the 5,000,000-state budget, so the answer is undecided. This is the exponential blow-up.');
+    const blocks = [];
+    if (r.found) blocks.push(kv('Answer', [['Feasible?', 'Yes'], [mode === 'cycle' ? 'Closed route' : 'Route', names(gph, r.found) + (mode === 'cycle' ? ' \u2192 ' + gph.names[r.found[0]] : '')]]));
+    else blocks.push(kv('Answer', [['Feasible?', r.exhausted ? 'Undecided (budget hit)' : 'No ' + (mode === 'cycle' ? 'Hamiltonian cycle' : 'Hamiltonian path') + ' exists']]));
+    blocks.push(kv('Search effort', [['States generated', fmt(r.states)], ['Dead ends (backtracks)', fmt(r.backtracks)], ['Wall time (ms)', ms.toFixed(2)], ['Worst-case states for n = ' + gph.n, gph.n <= 20 ? big(factorial(gph.n)) : 'n! (astronomical)']]));
+    return {
+      model: (gph.directed ? 'Directed' : 'Undirected') + ' graph, ' + gph.n + ' sites, ' + gph.edges.length + ' links; decide whether one route can visit each site exactly once (' + (mode === 'cycle' ? 'returning to the start' : 'free end point') + ')',
+      choice: {
+        name: 'Backtracking',
+        reasons: ['This is a feasibility question, not a cost question: extend a partial route one site at a time, and undo the last step when no unvisited neighbour remains.', 'Each dead end prunes every completion below it: ' + fmt(r.backtracks) + ' dead ends were cut off in ' + fmt(r.states) + ' states.'],
+      },
+      rejected: [
+        { name: 'Enumerate all n! permutations', reason: 'Backtracking checks adjacency while building, so it abandons impossible prefixes early.' },
+        { name: 'Prim / Kruskal / Floyd-Warshall', reason: 'They connect or measure; none of them can decide whether a single route covers every node once.' },
+      ],
+      complexity: { time: 'O(n!) worst case (about n * (n-1)! states)', space: 'O(n) recursion depth plus visited flags' },
+      blocks,
+      warnings,
+    };
+  };
+
+  /* ---- N-Queen style placement ---- */
+  SOLVERS.NQUEEN = function (req) {
+    const n = clamp(req.props.size, 1, 14);
+    const first = D.nqueens(n, true);
+    const all = n <= 11 ? D.nqueens(n, false) : null;
+    const warnings = [];
+    if (n === 2 || n === 3) warnings.push('No conflict-free placement exists for ' + n + ' x ' + n + '.');
+    const blocks = [];
+    if (first.first) blocks.push({ type: 'board', n, pos: first.first, title: 'Conflict-free sensor layout (one per row, none sharing a column or diagonal)' });
+    const kvs = [['Grid', n + ' x ' + n + ' city blocks, ' + n + ' sensors'], ['Nodes explored to the first layout', fmt(first.nodesToFirst || first.nodes)]];
+    if (all) kvs.push(['All distinct layouts', fmt(all.solutions) + ' (explored ' + fmt(all.nodes) + ' nodes, pruned ' + fmt(all.pruned) + ' branches)']);
+    else kvs.push(['All distinct layouts', 'not counted for n > 11']);
+    kvs.push(['Brute-force placements C(n^2, n)', n <= 14 ? big(binom(n * n, n)) : 'astronomical']);
+    blocks.push(kv('Search effort', kvs));
+    return {
+      model: n + ' x ' + n + ' grid of city blocks; two transmitters interfere if they share a row, column or diagonal; place ' + n + ' with no interference',
+      choice: { name: 'Backtracking', reasons: ['Place one sensor per row and test only the new sensor against used columns and diagonals.', 'A conflict rejects the whole subtree of placements below it: ' + fmt(first.pruned) + ' branches pruned before the first layout was found.'] },
+      rejected: [
+        { name: 'Try every placement of n sensors', reason: big(binom(n * n, n)) + ' placements for n = ' + n + '.' },
+        { name: 'Branch & Bound', reason: 'There is no cost to bound; the question is pure feasibility.' },
+      ],
+      complexity: { time: 'O(n!) worst case, far fewer states in practice because conflicts prune early', space: 'O(n) for the partial layout and conflict flags' },
+      blocks,
+      warnings,
+    };
+  };
+
+  /* ---- Travelling salesperson ---- */
+  SOLVERS.TSP = function (req) {
+    const gph = D.parseEdges(req.data.edges, false);
+    const n = gph.n;
+    if (n < 3) throw new Error('A tour needs at least three sites.');
+    if (n > 25) throw new Error('This demo holds at most 25 sites for TSP.');
+    const tm = D.tspMatrix(gph);
+    if (!tm.feasible) throw new Error('The network is not connected, so no tour can reach every site.');
+    const Dm = tm.D;
+    const rows = [];
+    const run = (label, fn) => {
+      const [r, ms] = D.timed(fn);
+      rows.push({ label, r, ms });
+      return r;
+    };
+    let bt = null;
+    if (n <= 10) bt = run('Backtracking (no bound)', () => D.tspBacktrack(Dm, 3e7));
+    const dfs = run('Branch & Bound, depth-first', () => D.tspBnBDFS(Dm, 4e6));
+    let bf = null,
+      bff = null;
+    if (n <= 13) {
+      bf = run('Branch & Bound, best-first (Binomial Heap queue)', () => D.tspBnBBestFirst(Dm, 3e5, D.BinomialHeap));
+      bff = run('Branch & Bound, best-first (Fibonacci Heap queue)', () => D.tspBnBBestFirst(Dm, 3e5, D.FibHeap));
+    }
+    const warnings = [];
+    if (tm.closure) warnings.push('Some site pairs had no direct link; their cost was filled with the cheapest connection found by Floyd-Warshall (so the tour may pass through other sites).');
+    if (!dfs.optimal) warnings.push('Search hit its state budget, so the tour below is the best found, not proven optimal. This is the NP-Hard growth showing itself.');
+    if (n > 13) warnings.push('Above 13 sites the framework runs only the depth-first Branch & Bound; the other methods would exceed their state or memory budgets.');
+    const space = n <= 20 ? big(factorial(n - 1) / 2n) : '(n-1)!/2';
+    const blocks = [];
+    blocks.push(kv('Cheapest tour', [['Cost', fmt(dfs.best)], ['Route', names(gph, dfs.path) + ' \u2192 ' + gph.names[dfs.path[0]]], ['Proven optimal', dfs.optimal ? 'yes' : 'no (budget reached)'], ['Possible tours (n-1)!/2', space]]));
+    blocks.push(table('Exact methods compared on this instance', ['Method', 'States expanded', 'Pruned', 'Peak frontier', 'Cost found', 'ms'], rows.map((x) => [x.label, fmt(x.r.nodes), fmt(x.r.pruned), x.r.maxQueue ? fmt(x.r.maxQueue) : '-', fmt(x.r.best), x.ms.toFixed(1)]), bt ? 2 : 1));
+    return {
+      headline: n + ' sites: ' + rows.length + ' exact method' + (rows.length > 1 ? 's' : '') + ' run; depth-first Branch & Bound expanded ' + fmt(dfs.nodes) + ' states' + (dfs.optimal ? '' : ' and stopped at its budget (not proven optimal)') + '.',
+      model: n + ' sites, complete cost matrix' + (tm.closure ? ' (gaps closed with Floyd-Warshall)' : '') + '; one vehicle visits every site once and returns to the start; minimise total cost',
+      choice: {
+        name: 'Branch & Bound (depth-first, min-edge lower bound)',
+        reasons: [
+          'This is a cost-minimisation over complete tours, so feasibility pruning alone is not enough: a partial tour is also abandoned when its cost plus an optimistic bound already reaches the best tour found.',
+          bt ? 'Measured: plain backtracking expanded ' + fmt(bt.nodes) + ' states, depth-first Branch & Bound ' + fmt(dfs.nodes) + ' (' + (bt.nodes / dfs.nodes).toFixed(1) + 'x fewer).' : 'Plain backtracking is skipped above 10 sites: ' + space + ' tours.',
+          'Depth-first keeps memory at O(n); best-first reaches the same optimum' + (bf ? ' with a frontier of up to ' + fmt(bf.maxQueue) + ' stored states' : '') + '.',
+        ],
+      },
+      rejected: [
+        { name: 'Backtracking without a bound', reason: 'Every one of the (n-1)! orderings is visited; no partial tour is ever dropped for being too expensive.' },
+        { name: 'Prim / Kruskal', reason: 'An MST is a tree, not a closed tour; it only provides a lower-bound idea.' },
+        { name: 'Best-first Branch & Bound', reason: 'Needs a heap frontier that grows with the search; fine for small n, memory-heavy beyond about 13 sites.' },
+      ],
+      complexity: { time: 'O(n!) worst case for both; bounding shrinks the practical search, not the worst case', space: 'Depth-first: O(n). Best-first: exponential frontier in the worst case.' },
+      blocks,
+      warnings,
+    };
+  };
+
+  /* ------------------------------------------------------------------ */
+  /* 3. Public entry point                                               */
+  /* ------------------------------------------------------------------ */
+  D.solve = function (req) {
+    const t0 = D.now();
+    try {
+      const rec = D.recognise(req);
+      if (!rec.problem) return { error: 'No rule matched these properties. Check the structure and goal.', trace: rec.trace };
+      const t1 = D.now();
+      const out = SOLVERS[rec.problem](req);
+      const t2 = D.now();
+      return Object.assign(out, { headline: out.headline || out.choice.reasons[out.choice.reasons.length - 1], problem: rec.problem, title: TITLES[rec.problem], rule: rec.rule, trace: rec.trace, cls: CLASS[rec.problem], timing: { recognise: t1 - t0, execute: t2 - t1 } });
+    } catch (e) {
+      return { error: e.message, trace: D.recognise(req).trace };
+    }
+  };
+
+  /* ------------------------------------------------------------------ */
+  /* 4. Smart-city scenarios and the adaptation demos                    */
+  /* ------------------------------------------------------------------ */
+  D.genGraph = function (n, m, seed, prefix, wmax) {
+    const r = D.rng(seed);
+    prefix = prefix || 'N';
+    wmax = wmax || 50;
+    const seen = new Set(),
+      lines = [];
+    const add = (a, b) => {
+      const k = a < b ? a + '-' + b : b + '-' + a;
+      if (a === b || seen.has(k)) return false;
+      seen.add(k);
+      lines.push(prefix + a + ' ' + prefix + b + ' ' + (1 + Math.floor(r() * wmax)));
+      return true;
+    };
+    for (let i = 1; i < n; i++) add(i, Math.floor(r() * i));
+    const target = Math.min(m, (n * (n - 1)) / 2);
+    while (lines.length < target) add(Math.floor(r() * n), Math.floor(r() * n));
+    return lines.join('\n');
+  };
+  D.genCoordGraph = function (n, seed, prefix) {
+    const r = D.rng(seed);
+    prefix = prefix || 'S';
+    const pts = Array.from({ length: n }, () => [Math.floor(r() * 100), Math.floor(r() * 100)]);
+    const lines = [];
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) lines.push(prefix + (i + 1) + ' ' + prefix + (j + 1) + ' ' + Math.round(Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1])));
+    return lines.join('\n');
+  };
+
+  const ITEMS_PROJ = ['SolarStreetlights 60 10', 'BusLaneUpgrade 100 20', 'WaterSensors 120 30', 'CCTVRefresh 50 15', 'EVChargers 90 25', 'FibreToSchools 70 12'].join('\n');
+  const mk = (id, title, scenario, structure, props, data) => ({ id, title, scenario, req: { structure, props, data: data || {} } });
+
+  D.PRESETS = [
+    mk('p1', 'City asset registry (in memory)', 'The control room keeps 20,000 street-asset records in RAM and needs fast lookup and insert by asset ID.', 'records', { records: 20000, residency: 'memory', blockCapacity: 64 }),
+    mk('p1b', 'Citizen permit archive (on disk)', 'Two million permit records live on disk and are fetched by permit number. Each disk read is slow.', 'records', { records: 20000, residency: 'disk', blockCapacity: 64 }),
+    mk('p2', 'Emergency dispatch queue', 'Incident priorities escalate constantly as new reports arrive. Most operations raise an existing incident to the front.', 'events', { events: 4000, decreaseShare: 60, merge: false, realtime: false }),
+    mk('p2b', 'Overnight billing batch queue', 'Utility bills are queued once and processed in order. Priorities almost never change.', 'events', { events: 4000, decreaseShare: 5, merge: false, realtime: false }),
+    mk('p3', 'Fibre backbone, sparse districts', 'Connect 40 city sites with fibre. Only 70 trenching routes are legally possible.', 'network', { goal: 'connect-all', directed: false }, { edges: D.genGraph(40, 70, 3, 'Site', 90) }),
+    mk('p3b', 'Fibre backbone, dense downtown', 'Connect 40 downtown buildings. Almost every pair can be linked directly.', 'network', { goal: 'connect-all', directed: false }, { edges: D.genGraph(40, 700, 4, 'Bldg', 90) }),
+    mk('p4', 'Metro zone travel costs', 'Planners need the cheapest travel cost between every pair of 7 zones. Some links are one-way.', 'network', { goal: 'pair-costs', directed: true }, { edges: ['North East 4', 'East South 6', 'South West 3', 'West North 5', 'North Centre 2', 'Centre South 2', 'Centre Harbour 7', 'Harbour South 1', 'East Airport 8', 'Airport Centre 3', 'West Centre 4'].join('\n') }),
+    mk('p5', 'Park renovation hours (divisible)', 'A crew has 120 hours. Each project gives value per hour and can be partly done in any proportion.', 'items', { divisible: true }, { items: ['Playground 90 30', 'RiverPath 60 40', 'Lighting 70 20', 'Benches 20 10', 'Garden 100 50'].join('\n'), capacity: '120' }),
+    mk('p5b', 'Smart-city upgrades (indivisible)', 'Six upgrades must each be funded fully or not at all. The budget is 36 units.', 'items', { divisible: false }, { items: ITEMS_PROJ, capacity: '36' }),
+    mk('p6', 'Analytics matrix pipeline', 'A server evaluates A1 x A2 x A3 x A4 x A5 x A6. Operation count is the CPU-load proxy.', 'matrices', {}, { dims: '30 35 15 5 10 20 25' }),
+    mk('p7', 'Ambulance corridor check', 'Can one inspection patrol cover all 9 junctions exactly once and return to its depot?', 'network', { goal: 'visit-once', directed: false, visitMode: 'cycle' }, { edges: ['J6 J1', 'J9 J1', 'J9 J3', 'J7 J8', 'J8 J9', 'J1 J2', 'J4 J5', 'J5 J9', 'J3 J4', 'J5 J6', 'J2 J3', 'J4 J9', 'J6 J7'].join('\n') }),
+    mk('p8', 'Radio-sensor placement', 'Place 8 transmitters on an 8 x 8 block grid. Two interfere if they share a row, column or diagonal.', 'grid', { conflict: 'line-of-sight', size: 8 }),
+    mk('p9', 'Substation inspection tour', 'One engineer must visit 9 substations once and return to the depot at minimum travel cost.', 'network', { goal: 'round-trip', directed: false }, { edges: D.genCoordGraph(9, 21, 'Sub') }),
+  ];
+  D.preset = (id) => JSON.parse(JSON.stringify(D.PRESETS.find((p) => p.id === id)));
+
+  const cl = (o) => JSON.parse(JSON.stringify(o));
+  const withProps = (req, patch, data) => {
+    const r = cl(req);
+    Object.assign(r.props, patch);
+    if (data) Object.assign(r.data, data);
+    return r;
+  };
+  const P = (id) => D.preset(id).req;
+  D.ADAPTATIONS = [
+    { id: 'a1', title: 'Same project list, splittable or not', changed: 'items divisible: yes \u2192 no', a: ['Divisible', withProps(P('p5b'), { divisible: true })], b: ['Indivisible', P('p5b')] },
+    { id: 'a2', title: 'Same 40 sites, sparse or dense link set', changed: 'candidate links: 70 \u2192 700', a: ['Sparse (70 links)', P('p3')], b: ['Dense (700 links)', P('p3b')] },
+    { id: 'a3', title: 'Same records, memory or disk', changed: 'residency: memory \u2192 disk', a: ['In memory', P('p1')], b: ['On disk', P('p1b')] },
+    { id: 'a4', title: 'Same queue, rare or constant escalations', changed: 'decrease-key share: 5% \u2192 60%', a: ['5% escalations', P('p2b')], b: ['60% escalations', P('p2')] },
+    { id: 'a5', title: 'Same network, different question', changed: 'goal: connect all \u2192 round trip \u2192 pair costs', a: ['Connect all', withProps(P('p9'), { goal: 'connect-all' })], b: ['Round trip', P('p9')], c: ['Pair costs', withProps(P('p9'), { goal: 'pair-costs' })] },
+    { id: 'a6', title: 'Same hard-real-time queue', changed: 'worst-case guarantee needed: no \u2192 yes', a: ['Average cost matters', P('p2')], b: ['Hard real-time', withProps(P('p2'), { realtime: true })] },
+    { id: 'a7', title: 'Tour size grows', changed: 'sites: 9 \u2192 14', a: ['9 sites', P('p9')], b: ['14 sites', withProps(P('p9'), {}, { edges: D.genCoordGraph(14, 33, 'Sub') })] },
+  ];
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* Algorithm 2035 - stress-testing lab.
+   Each experiment: generated input family -> measured operations -> comparison
+   with the theoretical bound -> risk rating (Low / Moderate / High). */
+(function (g) {
+  'use strict';
+  const D = (g.DAA = g.DAA || {});
+  const f = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-US', { maximumFractionDigits: 1 }) : String(x));
+
+  /* least-squares slope of log(y) against log(x) */
+  function slope(pts) {
+    const p = pts.filter((q) => q[0] > 0 && q[1] > 0).map((q) => [Math.log(q[0]), Math.log(q[1])]);
+    if (p.length < 2) return NaN;
+    const mx = p.reduce((s, q) => s + q[0], 0) / p.length,
+      my = p.reduce((s, q) => s + q[1], 0) / p.length;
+    let num = 0,
+      den = 0;
+    for (const q of p) {
+      num += (q[0] - mx) * (q[1] - my);
+      den += (q[0] - mx) * (q[0] - mx);
+    }
+    return num / den;
+  }
+  D.slope = slope;
+
+  /* polynomial family: compare fitted exponent with the theoretical one */
+  function polyRisk(pts, expected, lastMs, what) {
+    const s = slope(pts);
+    const fits = Math.abs(s - expected) <= 0.4;
+    if (!fits) return { level: 'Moderate', why: 'Fitted growth exponent ' + s.toFixed(2) + ' differs from the expected ' + expected + ' for ' + what + '; check input restrictions.' };
+    if (lastMs > 800) return { level: 'Moderate', why: 'Growth matches theory (exponent ' + s.toFixed(2) + ' vs ' + expected + ') but the largest run took ' + f(lastMs) + ' ms.' };
+    return { level: 'Low', why: 'Growth matches theory: fitted exponent ' + s.toFixed(2) + ' vs expected ' + expected + '. Practical for the tested sizes.' };
+  }
+  /* exponential family: ratio between consecutive sizes */
+  function expRisk(pts, lastMs, what) {
+    const r = pts.length > 1 ? pts[pts.length - 1][1] / Math.max(1, pts[pts.length - 2][1]) : 1;
+    const last = pts[pts.length - 1][1];
+    if (r >= 3 || last > 1e6) return { level: 'High', why: 'One extra input unit multiplied the work by ' + r.toFixed(1) + 'x (' + f(last) + ' ' + what + ' at the largest size). Exact search becomes impractical a few sizes later.' };
+    return { level: 'Moderate', why: 'Growth is steep (' + r.toFixed(1) + 'x per step, ' + f(last) + ' ' + what + ').' };
+  }
+
+  const timeIt = (fn) => D.timed(fn);
+
+  const EXPERIMENTS = [];
+
+  EXPERIMENTS.push({
+    id: 'mst',
+    title: 'MST: Prim vs Kruskal on sparse and dense graphs',
+    family: 'Minimum Spanning Tree',
+    theory: 'Prim (matrix) O(V^2); Kruskal O(E log E). Sparse: E = 2V. Dense: 60% of all possible links.',
+    xLabel: 'sites V',
+    run() {
+      const S = { ps: [], ks: [], pd: [], kd: [] },
+        rows = [];
+      let lastMs = 0;
+      for (const V of [20, 40, 80, 160, 320]) {
+        const sp = D.parseEdges(D.genGraph(V, 2 * V, V, 'v', 99), false);
+        const de = D.parseEdges(D.genGraph(V, Math.floor(0.6 * ((V * (V - 1)) / 2)), V + 1, 'v', 99), false);
+        const [a1, t1] = timeIt(() => D.prim(sp)),
+          [b1, t2] = timeIt(() => D.kruskal(sp)),
+          [a2, t3] = timeIt(() => D.prim(de)),
+          [b2, t4] = timeIt(() => D.kruskal(de));
+        S.ps.push([V, a1.ops]);
+        S.ks.push([V, b1.ops]);
+        S.pd.push([V, a2.ops]);
+        S.kd.push([V, b2.ops]);
+        lastMs = Math.max(t1, t2, t3, t4);
+        rows.push([V, sp.edges.length, f(a1.ops), f(b1.ops), de.edges.length, f(a2.ops), f(b2.ops), a2.total === b2.total ? 'yes' : 'NO']);
+      }
+      return {
+        series: [
+          { name: 'Prim, sparse', pts: S.ps },
+          { name: 'Kruskal, sparse', pts: S.ks },
+          { name: 'Prim, dense', pts: S.pd },
+          { name: 'Kruskal, dense', pts: S.kd },
+        ],
+        theory: { name: 'V^2 (reference)', fn: (x) => x * x, anchor: 0, on: 0 },
+        head: ['V', 'E sparse', 'Prim ops', 'Kruskal ops', 'E dense', 'Prim ops', 'Kruskal ops', 'Same cost'],
+        rows,
+        risk: polyRisk(S.pd, 2, lastMs, 'dense Prim'),
+        finding: 'On sparse graphs Kruskal does far fewer steps than Prim; on dense graphs the order flips. Both always return the same total cost.',
+      };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'fw',
+    title: 'Floyd-Warshall as the number of zones grows',
+    family: 'Dynamic programming: all-pairs',
+    theory: 'O(V^3) time, O(V^2) space: doubling V multiplies work by 8.',
+    xLabel: 'zones V',
+    run() {
+      const pts = [],
+        rows = [];
+      let lastMs = 0,
+        prev = 0;
+      for (const V of [20, 40, 80, 120, 160]) {
+        const gph = D.parseEdges(D.genGraph(V, 4 * V, V, 'z', 20), true);
+        const [r, ms] = timeIt(() => D.floydWarshall(gph));
+        pts.push([V, r.ops]);
+        rows.push([V, f(r.ops), f(V * V * V), f(ms), prev ? (r.ops / prev).toFixed(1) + 'x' : '-']);
+        prev = r.ops;
+        lastMs = ms;
+      }
+      return { series: [{ name: 'measured relaxations', pts }], theory: { name: 'V^3 (reference)', fn: (x) => x * x * x, anchor: 0 }, head: ['V', 'Relaxations', 'V^3', 'ms', 'Growth vs previous row'], rows, risk: polyRisk(pts, 3, lastMs, 'Floyd-Warshall'), finding: 'Operation count equals V^3 exactly, whatever the graph looks like. Cost depends on the zone count, not on the number of links.' };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'mcm',
+    title: 'Matrix Chain Multiplication as the chain grows',
+    family: 'Dynamic programming: chain order',
+    theory: 'O(n^3) time (about n^3/6 split evaluations), O(n^2) space.',
+    xLabel: 'matrices n',
+    run() {
+      const pts = [],
+        rows = [];
+      let lastMs = 0;
+      const r = D.rng(9);
+      for (const n of [10, 20, 40, 80, 160, 240]) {
+        const p = Array.from({ length: n + 1 }, () => 5 + Math.floor(r() * 60));
+        const [res, ms] = timeIt(() => D.mcm(p));
+        pts.push([n, res.ops]);
+        rows.push([n, f(res.ops), f(Math.round((n * n * n) / 6)), f(res.cost), f(res.leftToRight), (res.leftToRight / res.cost).toFixed(1) + 'x', f(ms)]);
+        lastMs = ms;
+      }
+      return { series: [{ name: 'split evaluations', pts }], theory: { name: 'n^3 / 6 (reference)', fn: (x) => (x * x * x) / 6, anchor: 0 }, head: ['n', 'Evaluations', 'n^3/6', 'Optimal cost', 'Left-to-right', 'Penalty of naive', 'ms'], rows, risk: polyRisk(pts, 3, lastMs, 'matrix-chain DP'), finding: 'The DP stays cubic while the naive left-to-right order costs several times more scalar multiplications on the same chain.' };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'knap',
+    title: 'Knapsack: greedy stays flat, DP grows with the capacity value',
+    family: 'Greedy vs dynamic programming',
+    theory: 'Fractional: O(n log n), independent of W. 0/1 DP: O(nW), pseudo-polynomial.',
+    xLabel: 'capacity W',
+    run() {
+      const r = D.rng(4);
+      const items = Array.from({ length: 100 }, (_, i) => ({ name: 'i' + i, value: 10 + Math.floor(r() * 90), weight: 20 + Math.floor(r() * 400) }));
+      const dpPts = [],
+        frPts = [],
+        rows = [];
+      let lastMs = 0;
+      for (const W of [100, 500, 1000, 5000, 10000, 20000]) {
+        const fr = D.knapFractional(items, W);
+        const [dp, ms] = timeIt(() => D.knap01(items, W));
+        dpPts.push([W, dp.ops]);
+        frPts.push([W, fr.ops]);
+        rows.push([f(W), f(fr.ops), f(dp.ops), f(dp.cells), f(fr.value), f(dp.value), f(fr.value - dp.value), f(ms)]);
+        lastMs = ms;
+      }
+      return { series: [{ name: '0/1 DP cell updates', pts: dpPts }, { name: 'Fractional greedy steps', pts: frPts }], theory: null, head: ['W', 'Greedy steps', 'DP updates', 'DP cells', 'Fractional value', '0/1 value', 'Value lost to indivisibility', 'ms'], rows, risk: polyRisk(dpPts.filter((q) => q[0] >= 500), 1, lastMs, 'knapsack DP in W'), finding: 'Greedy work never changes with W. DP work is proportional to W, which is why it is called pseudo-polynomial: a budget written in more digits makes the table huge.' };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'heap',
+    title: 'Binomial vs Fibonacci Heap under changing priorities',
+    family: 'Advanced data structure: priority queue',
+    theory: 'Decrease-key: Binomial O(log n), Fibonacci O(1) amortised. Extract-min: O(log n) for both.',
+    xLabel: 'events n',
+    run() {
+      const S = { b60: [], f60: [], b5: [], f5: [] },
+        rows = [];
+      let lastMs = 0;
+      for (const n of [500, 1000, 2000, 4000, 8000, 16000]) {
+        const o = { events: n, merge: false };
+        const [b60, t1] = timeIt(() => D.runHeapWorkload(D.BinomialHeap, { ...o, decreaseShare: 60 }));
+        const [f60, t2] = timeIt(() => D.runHeapWorkload(D.FibHeap, { ...o, decreaseShare: 60 }));
+        const b5 = D.runHeapWorkload(D.BinomialHeap, { ...o, decreaseShare: 5 }),
+          f5 = D.runHeapWorkload(D.FibHeap, { ...o, decreaseShare: 5 });
+        S.b60.push([n, b60.total]);
+        S.f60.push([n, f60.total]);
+        S.b5.push([n, b5.total]);
+        S.f5.push([n, f5.total]);
+        rows.push([f(n), f(b60.cost.dec / Math.max(1, b60.cnt.dec)) + ' / ' + f(f60.cost.dec / Math.max(1, f60.cnt.dec)), f(b60.total), f(f60.total), f(b5.total), f(f5.total)]);
+        lastMs = Math.max(t1, t2);
+      }
+      return {
+        series: [
+          { name: 'Binomial, 60% decrease-key', pts: S.b60 },
+          { name: 'Fibonacci, 60% decrease-key', pts: S.f60 },
+          { name: 'Binomial, 5% decrease-key', pts: S.b5 },
+          { name: 'Fibonacci, 5% decrease-key', pts: S.f5 },
+        ],
+        theory: { name: 'n log n (reference)', fn: (x) => x * Math.log2(x), anchor: 0 },
+        head: ['n', 'Steps per decrease-key (Bin / Fib)', 'Binomial total (60%)', 'Fibonacci total (60%)', 'Binomial total (5%)', 'Fibonacci total (5%)'],
+        rows,
+        risk: polyRisk(S.b60, 1.1, lastMs, 'heap workload (n log n)'),
+        finding: 'With frequent escalations the Fibonacci Heap does fewer steps, and the gap widens as n grows. With rare escalations the two are close, and the Binomial Heap keeps its worst-case guarantee.',
+      };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'tree',
+    title: 'B-Tree vs Red-Black Tree: node accesses for lookups',
+    family: 'Advanced data structure: search tree',
+    theory: 'Red-Black: O(log2 n) node accesses. B-Tree (t = 32): O(log_t n) node accesses.',
+    xLabel: 'records n',
+    run() {
+      const rbP = [],
+        btP = [],
+        rows = [];
+      let lastMs = 0;
+      for (const n of [1000, 4000, 16000, 64000]) {
+        const r = D.rng(n);
+        const set = new Set();
+        while (set.size < n) set.add(Math.floor(r() * n * 20));
+        const keys = [...set];
+        const rb = new D.RBTree(),
+          bt = new D.BTree(32);
+        const [, ms] = timeIt(() => {
+          keys.forEach((k) => rb.insert(k, 1));
+          keys.forEach((k) => bt.insert(k, 1));
+        });
+        const a = rb.st.visits,
+          b = bt.st.nodeReads;
+        keys.forEach((k) => rb.search(k));
+        keys.forEach((k) => bt.search(k));
+        const rbV = rb.st.visits - a,
+          btV = bt.st.nodeReads - b;
+        rbP.push([n, rbV / n]);
+        btP.push([n, btV / n]);
+        rows.push([f(n), rb.height(), bt.height(), (rbV / n).toFixed(1), (btV / n).toFixed(1), (rbV / btV).toFixed(1) + 'x', rb.st.rot, bt.st.splits]);
+        lastMs = ms;
+      }
+      return { series: [{ name: 'Red-Black: accesses per lookup', pts: rbP }, { name: 'B-Tree t=32: accesses per lookup', pts: btP }], theory: null, head: ['n', 'RB height', 'B height', 'RB accesses/lookup', 'B accesses/lookup', 'RB / B', 'RB rotations', 'B splits'], rows, risk: { level: 'Low', why: 'Both structures stay logarithmic. Red-Black grows like log2 n, the B-Tree like log32 n. Last build took ' + f(lastMs) + ' ms.' }, finding: 'A B-Tree needs 3 to 5 times fewer node accesses per lookup, which matters when each access is a disk read. In memory the gap shrinks to comparison counts.' };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'tsp',
+    title: 'TSP: backtracking vs Branch & Bound as sites increase',
+    family: 'Backtracking / Branch and Bound',
+    theory: 'Backtracking visits ~(n-1)! partial tours. Branch & Bound prunes with a lower bound but stays exponential in the worst case.',
+    xLabel: 'sites n',
+    run() {
+      const S = { bt: [], dfs: [], bf: [] },
+        rows = [];
+      let lastMs = 0;
+      for (let n = 5; n <= 12; n++) {
+        const gph = D.parseEdges(D.genCoordGraph(n, 100 + n, 'S'), false);
+        const Dm = D.tspMatrix(gph).D;
+        let bt = null,
+          t0 = 0;
+        if (n <= 10) [bt, t0] = timeIt(() => D.tspBacktrack(Dm, 3e7));
+        const [dfs, t1] = timeIt(() => D.tspBnBDFS(Dm, 4e6));
+        let bf = null;
+        if (n <= 11) bf = D.tspBnBBestFirst(Dm, 3e5, D.BinomialHeap);
+        if (bt) S.bt.push([n, bt.nodes]);
+        S.dfs.push([n, dfs.nodes]);
+        if (bf) S.bf.push([n, bf.nodes]);
+        rows.push([n, bt ? f(bt.nodes) : 'skipped', f(dfs.nodes), f(dfs.pruned), bf ? f(bf.nodes) : 'skipped', bf ? f(bf.maxQueue) : '-', f(dfs.best), dfs.optimal ? 'yes' : 'no']);
+        lastMs = Math.max(t0, t1);
+      }
+      const risk = expRisk(S.bt, lastMs, 'states for plain backtracking');
+      return { series: [{ name: 'Backtracking states', pts: S.bt }, { name: 'B&B depth-first states', pts: S.dfs }, { name: 'B&B best-first states', pts: S.bf }], theory: { name: '(n-1)! (reference)', fn: (x) => { let r = 1; for (let i = 2; i < x; i++) r *= i; return r; }, anchor: 0 }, head: ['n', 'Backtracking states', 'B&B DFS states', 'B&B pruned', 'B&B best-first states', 'Peak frontier', 'Best cost', 'Proven optimal'], rows, risk, finding: 'Plain backtracking multiplies by about n each step. Bounding cuts the search by one to two orders of magnitude on these instances but does not change its exponential nature. Best-first uses fewer states but stores a frontier that grows.' };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'nq',
+    title: 'N-Queen placement: states as the grid grows',
+    family: 'Backtracking',
+    theory: 'Worst case O(n!) states; conflict pruning removes most of them. Standard N-Queen is not NP-Complete.',
+    xLabel: 'grid size n',
+    run() {
+      const a = [],
+        b = [],
+        rows = [];
+      let lastMs = 0;
+      for (let n = 4; n <= 11; n++) {
+        const [all, ms] = timeIt(() => D.nqueens(n, false));
+        const first = D.nqueens(n, true);
+        a.push([n, all.nodes]);
+        b.push([n, first.nodes]);
+        rows.push([n, f(all.solutions), f(all.nodes), f(all.pruned), f(first.nodes), f(ms)]);
+        lastMs = ms;
+      }
+      return { series: [{ name: 'All layouts: nodes', pts: a }, { name: 'First layout: nodes', pts: b }], theory: { name: 'n! (reference)', fn: (x) => { let r = 1; for (let i = 2; i <= x; i++) r *= i; return r; }, anchor: 0 }, head: ['n', 'Layouts found', 'Nodes (all)', 'Branches pruned', 'Nodes (first layout)', 'ms'], rows, risk: { level: lastMs > 800 ? 'High' : 'Moderate', why: 'Enumerating every layout grows steeply (' + f(a[a.length - 1][1]) + ' nodes at n = 11). Finding one layout stays cheap, so the risk depends on which question is asked.' }, finding: 'Finding the first conflict-free layout needs far fewer states than listing all of them: feasibility is easy, enumeration is expensive.' };
+    },
+  });
+
+  EXPERIMENTS.push({
+    id: 'ham',
+    title: 'Hamiltonian cycle: a hard family with no solution',
+    family: 'Backtracking',
+    theory: 'Decision problem is NP-Complete. A complete graph plus one pendant site has no cycle, but plain backtracking only finds out after exploring almost every path.',
+    xLabel: 'sites n',
+    run() {
+      const pts = [],
+        rows = [];
+      let lastMs = 0;
+      for (let n = 6; n <= 11; n++) {
+        const lines = [];
+        for (let i = 0; i < n - 1; i++) for (let j = i + 1; j < n - 1; j++) lines.push('v' + i + ' v' + j);
+        lines.push('v0 v' + (n - 1));
+        const gph = D.parseEdges(lines.join('\n'), false);
+        const [h, ms] = timeIt(() => D.hamiltonian(gph, 'cycle', 5e6));
+        pts.push([n, h.states]);
+        rows.push([n, lines.length, f(h.states), f(h.backtracks), h.found ? 'yes' : h.exhausted ? 'undecided' : 'no cycle', f(ms)]);
+        lastMs = ms;
+      }
+      return { series: [{ name: 'states generated', pts }], theory: { name: '(n-1)! (reference)', fn: (x) => { let r = 1; for (let i = 2; i < x; i++) r *= i; return r; }, anchor: 0 }, head: ['n', 'Links', 'States', 'Dead ends', 'Answer', 'ms'], rows, risk: expRisk(pts, lastMs, 'states'), finding: 'The answer is always "no cycle", yet the search cost multiplies at every step. A cheap degree check (every site needs two links) would end it at once. That check is exactly the kind of pruning rule that exact solvers add.' };
+    },
+  });
+
+  D.EXPERIMENTS = EXPERIMENTS;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* Algorithm 2035 - built-in correctness tests (run in the browser or with node). */
+(function (g) {
+  'use strict';
+  const D = (g.DAA = g.DAA || {});
+  D.runTests = function () {
+    const out = [];
+    const T = (name, fn) => {
+      try {
+        const r = fn();
+        out.push({ name, pass: r === true, detail: r === true ? '' : String(r) });
+      } catch (e) {
+        out.push({ name, pass: false, detail: e.message });
+      }
+    };
+    const r = D.rng(7);
+    const keys = [];
+    for (let i = 0; i < 3000; i++) keys.push(Math.floor(r() * 1e6));
+    const uniq = [...new Set(keys)].sort((a, b) => a - b);
+    const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+    T('Red-Black Tree: in-order is sorted, colour rules and black-height hold', () => {
+      const t = new D.RBTree();
+      keys.forEach((k, i) => t.insert(k, i));
+      return same(t.inorder(), uniq) && t.validate() > 0 && keys.every((k) => t.search(k) !== undefined);
+    });
+    T('Red-Black Tree: height <= 2 log2(n+1)', () => {
+      const t = new D.RBTree();
+      keys.forEach((k) => t.insert(k, 1));
+      return t.height() <= 2 * Math.log2(t.st.size + 1) || 'height ' + t.height();
+    });
+    T('B-Tree (t = 2, 3, 16): sorted, all leaves same depth, every key found', () => {
+      for (const t of [2, 3, 16]) {
+        const b = new D.BTree(t);
+        keys.forEach((k) => b.insert(k, 1));
+        if (!same(b.inorder(), uniq) || !b.validate() || !keys.every((k) => b.search(k) !== undefined)) return 'failed for t=' + t;
+      }
+      return true;
+    });
+    for (const H of [D.BinomialHeap, D.FibHeap]) {
+      T((H === D.BinomialHeap ? 'Binomial' : 'Fibonacci') + ' Heap: extract-min order is sorted after decrease-key and merge', () => {
+        const h = new H(),
+          items = [];
+        for (let i = 0; i < 2000; i++) items.push(h.insert(r() * 1000, i));
+        for (let i = 0; i < 800; i++) {
+          const it = items[Math.floor(r() * items.length)];
+          if (it.key > 1) h.decreaseKey(it, it.key * r());
+        }
+        const h2 = new H(),
+          more = [];
+        for (let i = 0; i < 300; i++) more.push(h2.insert(r() * 1000, i));
+        h.merge(h2);
+        const expected = [...items, ...more].map((x) => x.key).sort((a, b) => a - b);
+        const got = [];
+        let x;
+        while ((x = h.extractMin())) got.push(x.key);
+        return same(got, expected);
+      });
+    }
+    const rg = (n, p, seed) => {
+      const q = D.rng(seed);
+      let s = '';
+      for (let i = 1; i < n; i++) s += 'v' + i + ' v' + Math.floor(q() * i) + ' ' + (1 + Math.floor(q() * 50)) + '\n';
+      for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) if (q() < p) s += 'v' + i + ' v' + j + ' ' + (1 + Math.floor(q() * 50)) + '\n';
+      return D.parseEdges(s, false);
+    };
+    T('Prim and Kruskal return the same minimum cost on 50 random graphs', () => {
+      for (let s = 0; s < 50; s++) {
+        const gph = rg(20, 0.2, s),
+          a = D.prim(gph),
+          b = D.kruskal(gph);
+        if (a.total !== b.total || !a.connected || !b.connected) return 'differ on seed ' + s;
+      }
+      return true;
+    });
+    T('Floyd-Warshall equals Bellman-Ford from every source (20 random digraphs)', () => {
+      for (let s = 0; s < 20; s++) {
+        const gph = rg(12, 0.3, s);
+        gph.directed = true;
+        const fw = D.floydWarshall(gph),
+          n = gph.n;
+        for (let src = 0; src < n; src++) {
+          const d = new Array(n).fill(Infinity);
+          d[src] = 0;
+          for (let it = 0; it < n; it++) for (const e of gph.edges) if (d[e.u] + e.w < d[e.v]) d[e.v] = d[e.u] + e.w;
+          for (let j = 0; j < n; j++) if (d[j] !== fw.d[src][j]) return 'mismatch seed ' + s;
+        }
+      }
+      return true;
+    });
+    T('0/1 Knapsack DP equals brute force over 2^10 subsets; fractional value >= 0/1 value', () => {
+      for (let s = 0; s < 30; s++) {
+        const q = D.rng(s),
+          n = 10,
+          items = [];
+        for (let i = 0; i < n; i++) items.push({ name: 'i' + i, value: 1 + Math.floor(q() * 40), weight: 1 + Math.floor(q() * 20) });
+        const W = 30;
+        let best = 0;
+        for (let m = 0; m < 1 << n; m++) {
+          let w = 0,
+            v = 0;
+          for (let i = 0; i < n; i++) if ((m >> i) & 1) {
+            w += items[i].weight;
+            v += items[i].value;
+          }
+          if (w <= W && v > best) best = v;
+        }
+        const dp = D.knap01(items, W),
+          fr = D.knapFractional(items, W);
+        if (dp.value !== best || fr.value < best - 1e-9 || dp.chosen.reduce((a, x) => a + x.weight, 0) > W) return 'seed ' + s;
+      }
+      return true;
+    });
+    T('Matrix Chain DP equals exhaustive recursion on 20 random chains of 7 matrices', () => {
+      const brute = (p, i, j) => {
+        if (i === j) return 0;
+        let b = Infinity;
+        for (let k = i; k < j; k++) b = Math.min(b, brute(p, i, k) + brute(p, k + 1, j) + p[i - 1] * p[k] * p[j]);
+        return b;
+      };
+      for (let s = 0; s < 20; s++) {
+        const q = D.rng(s),
+          p = Array.from({ length: 8 }, () => 1 + Math.floor(q() * 30));
+        if (D.mcm(p).cost !== brute(p, 1, 7)) return 'seed ' + s;
+      }
+      return true;
+    });
+    T('N-Queen solution counts: n=4 -> 2, n=6 -> 4, n=8 -> 92', () => D.nqueens(4).solutions === 2 && D.nqueens(6).solutions === 4 && D.nqueens(8).solutions === 92);
+    T('Hamiltonian: 4-cycle has a cycle; a star has neither cycle nor path', () => {
+      const c = D.parseEdges('a b\nb c\nc d\nd a', false),
+        st = D.parseEdges('a b\na c\na d', false);
+      return D.hamiltonian(c, 'cycle').found !== null && D.hamiltonian(st, 'cycle').found === null && D.hamiltonian(st, 'path').found === null;
+    });
+    T('TSP: backtracking, both Branch & Bound variants and both heap frontiers agree (10 instances)', () => {
+      for (let s = 0; s < 10; s++) {
+        const q = D.rng(s + 100),
+          n = 8;
+        const pts = Array.from({ length: n }, () => [q() * 100, q() * 100]);
+        const M = pts.map((a) => pts.map((b) => Math.round(Math.hypot(a[0] - b[0], a[1] - b[1]))));
+        const a = D.tspBacktrack(M).best,
+          b = D.tspBnBDFS(M).best,
+          c = D.tspBnBBestFirst(M, 2e6, D.BinomialHeap).best,
+          d = D.tspBnBBestFirst(M, 2e6, D.FibHeap).best;
+        if (!(a === b && b === c && c === d)) return 'seed ' + s + ': ' + [a, b, c, d].join(', ');
+      }
+      return true;
+    });
+    T('Engine: changing one property changes the chosen technique (7 adaptation pairs)', () => {
+      for (const a of D.ADAPTATIONS) {
+        const picks = ['a', 'b', 'c'].filter((k) => a[k]).map((k) => D.solve(a[k][1]));
+        if (picks.some((x) => x.error)) return a.id + ' errored';
+        if (a.id !== 'a7' && new Set(picks.map((x) => x.choice.name)).size < 2) return a.id + ' did not adapt';
+      }
+      return true;
+    });
+    T('Engine: all 13 smart-city scenarios solve without error', () => {
+      for (const p of D.PRESETS) {
+        const x = D.solve(p.req);
+        if (x.error) return p.id + ': ' + x.error;
+      }
+      return true;
+    });
+    return out;
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* Algorithm 2035 - user interface */
+(function () {
+  'use strict';
+  const D = window.DAA;
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const tick = () => new Promise((r) => setTimeout(r, 20));
+  const f1 = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-US', { maximumFractionDigits: 1 }) : String(x));
+
+  const FAMILY = {
+    ORDERED_SEARCH: ['Data structures', 'blue'],
+    DYNAMIC_PRIORITY: ['Data structures', 'blue'],
+    MST: ['Graph optimisation', 'teal'],
+    APSP: ['Graph optimisation', 'teal'],
+    KNAP_FRAC: ['Resource selection', 'amber'],
+    KNAP_01: ['Resource selection', 'amber'],
+    MCM: ['Resource selection', 'amber'],
+    HAMILTON: ['Constraint search', 'mag'],
+    NQUEEN: ['Constraint search', 'mag'],
+    TSP: ['Constraint search', 'mag'],
+  };
+  const PRESET_PROBLEM = { p1: 'ORDERED_SEARCH', p1b: 'ORDERED_SEARCH', p2: 'DYNAMIC_PRIORITY', p2b: 'DYNAMIC_PRIORITY', p3: 'MST', p3b: 'MST', p4: 'APSP', p5: 'KNAP_FRAC', p5b: 'KNAP_01', p6: 'MCM', p7: 'HAMILTON', p8: 'NQUEEN', p9: 'TSP' };
+
+  const state = { req: null, scenario: '', presetId: null, result: null };
+
+  /* ---------------- tabs ---------------- */
+  const inited = {};
+  function showTab(id) {
+    $$('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+    $$('.panel').forEach((p) => (p.hidden = p.id !== 'tab-' + id));
+    if (id === 'adapt' && !inited.adapt) {
+      inited.adapt = true;
+      renderAdapt();
+    }
+    if (id === 'lab' && !inited.lab) {
+      inited.lab = true;
+      renderLab();
+    }
+    if (id === 'theory' && !inited.theory) {
+      inited.theory = true;
+      renderTheory();
+    }
+    if (id === 'tests') renderTests();
+  }
+
+  /* ---------------- request form ---------------- */
+  const STRUCTS = [
+    ['records', 'Keyed records'],
+    ['events', 'Prioritised events'],
+    ['network', 'Weighted network'],
+    ['items', 'Items under a budget'],
+    ['matrices', 'Chain of matrices'],
+    ['grid', 'Placement grid'],
+  ];
+  const DEFAULT_PRESET = { records: 'p1', events: 'p2', network: 'p3', items: 'p5b', matrices: 'p6', grid: 'p8' };
+  const GOALS = [
+    ['connect-all', 'Connect every site at the lowest total cost'],
+    ['pair-costs', 'Know the cheapest cost between every pair of sites'],
+    ['visit-once', 'Decide if one route can visit every site exactly once'],
+    ['round-trip', 'Find the cheapest round trip through every site'],
+  ];
+  const get = (o, path) => path.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
+  const set = (o, path, v) => {
+    const ks = path.split('.');
+    const last = ks.pop();
+    ks.reduce((a, k) => (a[k] = a[k] || {}), o)[last] = v;
+  };
+  const field = (label, k, type, extra) => {
+    const v = get(state.req, k);
+    const id = 'f-' + k.replace('.', '-');
+    extra = extra || {};
+    if (type === 'check') return '<label class="chk"><input type="checkbox" id="' + id + '" data-k="' + k + '" data-t="check"' + (v ? ' checked' : '') + '><span>' + esc(label) + '</span></label>';
+    if (type === 'select') return '<label class="fld"><span>' + esc(label) + '</span><select id="' + id + '" data-k="' + k + '" data-t="text">' + extra.options.map((o) => '<option value="' + esc(o[0]) + '"' + (o[0] === v ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select></label>';
+    if (type === 'area') return '<label class="fld"><span>' + esc(label) + '</span><textarea id="' + id + '" data-k="' + k + '" data-t="text" rows="' + (extra.rows || 6) + '" spellcheck="false">' + esc(v) + '</textarea>' + (extra.hint ? '<small>' + esc(extra.hint) + '</small>' : '') + '</label>';
+    if (type === 'range') return '<label class="fld"><span>' + esc(label) + ': <b id="' + id + '-v">' + esc(v) + '%</b></span><input type="range" min="0" max="100" step="5" id="' + id + '" data-k="' + k + '" data-t="num" value="' + esc(v) + '"></label>';
+    return '<label class="fld"><span>' + esc(label) + '</span><input type="' + (type === 'num' ? 'number' : 'text') + '" id="' + id + '" data-k="' + k + '" data-t="' + (type === 'num' ? 'num' : 'text') + '" value="' + esc(v) + '"' + (extra.min != null ? ' min="' + extra.min + '"' : '') + '></label>';
+  };
+
+  function renderForm() {
+    const r = state.req,
+      p = r.props;
+    let h = '<label class="fld"><span>What kind of data is it?</span><select id="f-structure">' + STRUCTS.map((s) => '<option value="' + s[0] + '"' + (s[0] === r.structure ? ' selected' : '') + '>' + s[1] + '</option>').join('') + '</select></label>';
+    if (r.structure === 'records') {
+      h += field('Where do the records live?', 'props.residency', 'select', { options: [['memory', 'In memory (RAM)'], ['disk', 'On disk, read in blocks']] });
+      h += field('Number of records', 'props.records', 'num', { min: 200 });
+      h += field('Keys that fit in one disk block', 'props.blockCapacity', 'num', { min: 3 });
+    } else if (r.structure === 'events') {
+      h += field('Number of events', 'props.events', 'num', { min: 100 });
+      h += field('Operations that raise an existing priority', 'props.decreaseShare', 'range');
+      h += field('Separate queues must be merged', 'props.merge', 'check');
+      h += field('Every single operation needs a worst-case time bound', 'props.realtime', 'check');
+    } else if (r.structure === 'network') {
+      h += field('What do you need from the network?', 'props.goal', 'select', { options: GOALS });
+      if (p.goal === 'pair-costs' || p.goal === 'visit-once') h += field('Links are one-way', 'props.directed', 'check');
+      if (p.goal === 'visit-once') h += field('Route must return to the start', 'props.visitMode', 'select', { options: [['cycle', 'Yes, closed route'], ['path', 'No, any end point']] });
+      h += field('Links (one per line)', 'data.edges', 'area', { rows: 8, hint: 'Format: siteA siteB cost. Cost can be left out for yes/no questions.' });
+    } else if (r.structure === 'items') {
+      h += field('Items can be split into parts', 'props.divisible', 'check');
+      h += field('Budget / capacity', 'data.capacity', 'text');
+      h += field('Items (one per line)', 'data.items', 'area', { rows: 7, hint: 'Format: name value weight' });
+    } else if (r.structure === 'matrices') {
+      h += field('Matrix dimensions p0 p1 p2 ...', 'data.dims', 'text');
+      h += '<p class="hint">Matrix i has size p(i-1) x p(i), so 4 numbers describe 3 matrices.</p>';
+    } else if (r.structure === 'grid') {
+      h += field('Placed items conflict when they share', 'props.conflict', 'select', { options: [['line-of-sight', 'a row, column or diagonal'], ['none', 'nothing (no conflicts)']] });
+      h += field('Grid size n (n x n, n items)', 'props.size', 'num', { min: 1 });
+    }
+    $('#form').innerHTML = h;
+    $('#reqjson').textContent = JSON.stringify(cleanReq(), null, 1);
+    const sel = $('#f-structure');
+    sel.addEventListener('change', () => {
+      const id = DEFAULT_PRESET[sel.value];
+      const pr = D.preset(id);
+      state.req = pr.req;
+      state.scenario = '';
+      state.presetId = null;
+      renderForm();
+      renderPresets();
+      setScenario();
+    });
+    $$('#form [data-k]').forEach((el) => {
+      const ev = el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'input';
+      el.addEventListener(ev, () => {
+        let v = el.value;
+        if (el.dataset.t === 'check') v = el.checked;
+        else if (el.dataset.t === 'num') v = Number(v);
+        set(state.req, el.dataset.k, v);
+        if (el.type === 'range') $('#' + el.id + '-v').textContent = v + '%';
+        state.scenario = '';
+        state.presetId = null;
+        setScenario();
+        renderPresets();
+        $('#reqjson').textContent = JSON.stringify(cleanReq(), null, 1);
+        if (el.dataset.k === 'props.goal') {
+          const pid = { 'connect-all': 'p3', 'pair-costs': 'p4', 'visit-once': 'p7', 'round-trip': 'p9' }[v];
+          const pr = D.preset(pid);
+          state.req.props = Object.assign({}, pr.req.props);
+          state.req.data = pr.req.data;
+          renderForm();
+        }
+      });
+    });
+  }
+  const cleanReq = () => JSON.parse(JSON.stringify(state.req));
+
+  function renderPresets() {
+    $('#presets').innerHTML = D.PRESETS.map((p, i) => {
+      const fam = FAMILY[PRESET_PROBLEM[p.id]];
+      return '<button type="button" class="pre c-' + fam[1] + (state.presetId === p.id ? ' on' : '') + '" data-id="' + p.id + '"><span class="pt">' + esc(p.title) + '</span><span class="pf">' + esc(D.TITLES[PRESET_PROBLEM[p.id]]) + '</span></button>';
+    }).join('');
+    $$('#presets .pre').forEach((b) =>
+      b.addEventListener('click', () => {
+        const pr = D.preset(b.dataset.id);
+        state.req = pr.req;
+        state.scenario = pr.scenario;
+        state.presetId = pr.id;
+        renderForm();
+        renderPresets();
+        setScenario();
+        run();
+      })
+    );
+  }
+  const setScenario = () => {
+    $('#scenario').textContent = state.scenario || 'Custom request. The engine only sees the properties and data in the form.';
+  };
+
+  /* ---------------- pipeline ---------------- */
+  const STAGES = ['Scenario input', 'Problem model', 'DAA choice', 'Execution', 'Analysis', 'Explanation'];
+  function renderPipeline(res) {
+    const fam = res && res.problem ? FAMILY[res.problem] : ['', 'teal'];
+    const caps = res && !res.error
+      ? [state.presetId ? D.PRESETS.find((p) => p.id === state.presetId).title : 'Custom request', res.model, res.choice.name, f1(res.timing.execute) + ' ms to run', res.cls.label, res.rejected.length + ' alternative' + (res.rejected.length === 1 ? '' : 's') + ' ruled out']
+      : ['', '', '', '', '', ''];
+    $('#pipeline').className = 'pipe c-' + fam[1] + (res && !res.error ? ' done' : '');
+    $('#pipeline').innerHTML = '<ol>' + STAGES.map((s, i) => '<li style="--i:' + i + '"><span class="dot"></span><b>' + s + '</b><span class="cap">' + esc(caps[i]) + '</span></li>').join('') + '</ol>';
+  }
+
+  /* ---------------- result ---------------- */
+  function renderBlock(b) {
+    let h = '<section class="blk">' + (b.title ? '<h4>' + esc(b.title) + '</h4>' : '');
+    if (b.type === 'kv') h += '<dl>' + b.items.map((i) => '<div><dt>' + esc(i[0]) + '</dt><dd>' + esc(i[1]) + '</dd></div>').join('') + '</dl>';
+    else if (b.type === 'table')
+      h += '<div class="scroll"><table><thead><tr>' + b.head.map((x, i) => '<th' + (b.hl === i ? ' class="hl"' : '') + '>' + esc(x) + '</th>').join('') + '</tr></thead><tbody>' + b.rows.map((r) => '<tr>' + r.map((c, i) => '<td' + (b.hl === i ? ' class="hl"' : '') + '>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+    else if (b.type === 'text') h += b.html;
+    else if (b.type === 'board') {
+      let cells = '';
+      for (let r = 0; r < b.n; r++) for (let c = 0; c < b.n; c++) cells += '<i class="' + ((r + c) % 2 ? 'dk' : '') + (b.pos[r] === c ? ' q' : '') + '">' + (b.pos[r] === c ? '&#9679;' : '') + '</i>';
+      h += '<div class="board" style="--n:' + b.n + '" role="img" aria-label="Grid with ' + b.n + ' sensors, none sharing a row, column or diagonal">' + cells + '</div>';
+    }
+    return h + '</section>';
+  }
+
+  function renderResult() {
+    const res = state.result;
+    renderPipeline(res);
+    const el = $('#result');
+    if (!res) {
+      el.innerHTML = '';
+      return;
+    }
+    if (res.error) {
+      el.innerHTML = '<article class="card err" role="alert"><h2>The request could not be solved</h2><p>' + esc(res.error) + '</p></article>';
+      return;
+    }
+    const fam = FAMILY[res.problem];
+    el.innerHTML =
+      '<article class="card c-' + fam[1] + '">' +
+      '<div class="rhead"><div><p class="muted">Recognised as</p><h2>' + esc(res.title) + '</h2><p class="muted">Rule ' + res.rule + ' matched the properties of this request.</p></div><span class="badge k-' + res.cls.kind + '">' + esc(res.cls.label) + '</span></div>' +
+      '<p class="model">' + esc(res.model) + '</p>' +
+      '<div class="choice"><p class="muted">Chosen technique</p><h3>' + esc(res.choice.name) + '</h3><ul>' + res.choice.reasons.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></div>' +
+      res.warnings.map((w) => '<p class="warn" role="note">' + esc(w) + '</p>').join('') +
+      res.blocks.map(renderBlock).join('') +
+      '<div class="two"><section class="blk"><h4>Alternatives ruled out</h4><ul>' + res.rejected.map((x) => '<li><b>' + esc(x.name) + '.</b> ' + esc(x.reason) + '</li>').join('') + '</ul></section>' +
+      '<section class="blk"><h4>Expected complexity</h4><dl><div><dt>Time</dt><dd>' + esc(res.complexity.time) + '</dd></div><div><dt>Space</dt><dd>' + esc(res.complexity.space) + '</dd></div></dl></section></div>' +
+      '<section class="blk"><h4>Complexity class: decision and optimisation forms</h4><dl><div><dt>Decision form</dt><dd>' + esc(res.cls.decision) + '</dd></div><div><dt>Optimisation form</dt><dd>' + esc(res.cls.optimization) + '</dd></div><div><dt>Note</dt><dd>' + esc(res.cls.note) + '</dd></div></dl></section>' +
+      '<details class="trace"><summary>Recognition rules evaluated (' + res.trace.filter((t) => t.fired).length + ' of ' + res.trace.length + ' matched)</summary><ul>' + res.trace.map((t) => '<li class="' + (t.fired ? 'hit' : '') + '"><b>' + t.id + '</b> ' + esc(t.when) + ' <em>' + (t.fired ? 'matched' : 'no match') + '</em></li>').join('') + '</ul><p class="muted">The first matching rule decides the problem type. Rules read properties only; no algorithm name is ever part of a request.</p></details>' +
+      '</article>';
+  }
+
+  function run() {
+    const btn = $('#run');
+    btn.disabled = true;
+    setTimeout(() => {
+      state.result = D.solve(cleanReq());
+      renderResult();
+      btn.disabled = false;
+    }, 10);
+  }
+
+  /* ---------------- adaptation demos ---------------- */
+  function renderAdapt() {
+    const box = $('#adaptList');
+    box.innerHTML = D.ADAPTATIONS.map((a, i) => {
+      const vs = ['a', 'b', 'c'].filter((k) => a[k]).map((k) => ({ key: k, label: a[k][0], res: D.solve(a[k][1]) }));
+      const names = new Set(vs.map((v) => v.res.choice && v.res.choice.name));
+      const changed = names.size > 1;
+      return '<article class="card adapt"><h3>' + esc(a.title) + '</h3><p class="muted">Property changed: <b>' + esc(a.changed) + '</b></p><div class="vars n' + vs.length + '">' + vs.map((v) => {
+        if (v.res.error) return '<div class="var"><p class="muted">' + esc(v.label) + '</p><p class="warn">' + esc(v.res.error) + '</p></div>';
+        const fam = FAMILY[v.res.problem];
+        return '<div class="var c-' + fam[1] + '"><p class="muted">' + esc(v.label) + '</p><p class="pn">' + esc(v.res.title) + '</p><h4>' + esc(v.res.choice.name) + '</h4><p class="hd">' + esc(v.res.headline) + '</p><button type="button" class="btn ghost" data-a="' + a.id + '" data-v="' + v.key + '">Open in solver</button></div>';
+      }).join('') + '</div><p class="verdict ' + (changed ? 'yes' : 'no') + '">' + (changed ? 'The framework chose a different technique.' : 'Same primary technique; the supporting methods and cost profile changed.') + '</p></article>';
+    }).join('');
+    $$('#adaptList button[data-a]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const a = D.ADAPTATIONS.find((x) => x.id === b.dataset.a);
+        state.req = JSON.parse(JSON.stringify(a[b.dataset.v][1]));
+        state.scenario = a.title + ' - ' + a[b.dataset.v][0];
+        state.presetId = null;
+        showTab('solve');
+        renderForm();
+        renderPresets();
+        setScenario();
+        run();
+      })
+    );
+  }
+
+  /* ---------------- charts ---------------- */
+  const SER_COL = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--s4)', 'var(--s5)'];
+  const SER_DASH = ['', '6 3', '', '6 3', '2 3'];
+  const compact = (v) => (v >= 1e6 ? +(v / 1e6).toPrecision(3) + 'M' : v >= 1e3 ? +(v / 1e3).toPrecision(3) + 'K' : String(+v.toPrecision(3)));
+  function chart(series, theory, xLabel) {
+    const W = 640,
+      H = 310,
+      L = 58,
+      R = 14,
+      T = 12,
+      B = 44;
+    const all = series.filter((s) => s.pts.length).flatMap((s) => s.pts);
+    const xs = [...new Set(series[0].pts.map((p) => p[0]))];
+    const xmin = Math.min(...all.map((p) => p[0])),
+      xmax = Math.max(...all.map((p) => p[0]));
+    let ys = all.map((p) => p[1]).filter((y) => y > 0);
+    let th = null;
+    if (theory) {
+      const a = series[theory.anchor || 0].pts[0];
+      const sc = a[1] / theory.fn(a[0]);
+      th = series[0].pts.map((p) => [p[0], theory.fn(p[0]) * sc]);
+      ys = ys.concat(th.map((p) => p[1]).filter((y) => isFinite(y) && y > 0));
+    }
+    const ymin = Math.pow(10, Math.floor(Math.log10(Math.min(...ys)))),
+      ymax = Math.pow(10, Math.ceil(Math.log10(Math.max(...ys))));
+    const xlog = xmax / xmin > 12;
+    const X = (x) => L + ((xlog ? Math.log(x / xmin) / Math.log(xmax / xmin) : (x - xmin) / (xmax - xmin || 1)) * (W - L - R));
+    const Y = (y) => T + (1 - (Math.log10(Math.max(y, ymin)) - Math.log10(ymin)) / (Math.log10(ymax) - Math.log10(ymin) || 1)) * (H - T - B);
+    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="chart" role="img" aria-label="Line chart of measured operations against ' + esc(xLabel) + ', logarithmic vertical axis">';
+    for (let e = Math.log10(ymin); e <= Math.log10(ymax) + 1e-9; e++) {
+      const y = Y(Math.pow(10, e));
+      s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '" class="grid"/><text x="' + (L - 8) + '" y="' + (y + 4) + '" text-anchor="end" class="tk">' + compact(Math.pow(10, e)) + '</text>';
+    }
+    xs.forEach((x) => {
+      s += '<text x="' + X(x) + '" y="' + (H - B + 16) + '" text-anchor="middle" class="tk">' + compact(x) + '</text><line x1="' + X(x) + '" x2="' + X(x) + '" y1="' + (H - B) + '" y2="' + (H - B + 4) + '" class="axis"/>';
+    });
+    s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + (H - B) + '" y2="' + (H - B) + '" class="axis"/><line x1="' + L + '" x2="' + L + '" y1="' + T + '" y2="' + (H - B) + '" class="axis"/>';
+    s += '<text x="' + (L + (W - L - R) / 2) + '" y="' + (H - 6) + '" text-anchor="middle" class="al">' + esc(xLabel) + '</text>';
+    if (th) s += '<polyline points="' + th.map((p) => X(p[0]) + ',' + Y(p[1])).join(' ') + '" class="theory"/>';
+    series.forEach((se, i) => {
+      if (!se.pts.length) return;
+      s += '<polyline points="' + se.pts.map((p) => X(p[0]) + ',' + Y(p[1])).join(' ') + '" fill="none" stroke="' + SER_COL[i % 5] + '" stroke-width="2.4" stroke-dasharray="' + SER_DASH[i % 5] + '"/>';
+      se.pts.forEach((p) => (s += '<circle cx="' + X(p[0]) + '" cy="' + Y(p[1]) + '" r="3.2" fill="' + SER_COL[i % 5] + '"/>'));
+    });
+    s += '</svg><ul class="legend">' + series.map((se, i) => '<li><svg width="26" height="8" aria-hidden="true"><line x1="0" x2="26" y1="4" y2="4" stroke="' + SER_COL[i % 5] + '" stroke-width="2.4" stroke-dasharray="' + SER_DASH[i % 5] + '"/></svg>' + esc(se.name) + '</li>').join('') + (th ? '<li><svg width="26" height="8" aria-hidden="true"><line x1="0" x2="26" y1="4" y2="4" class="theory"/></svg>' + esc(theory.name) + '</li>' : '') + '</ul>';
+    return s;
+  }
+
+  /* ---------------- experiment lab ---------------- */
+  const EXP = {};
+  const runExp = async (id) => {
+    const e = D.EXPERIMENTS.find((x) => x.id === id);
+    const btn = $('#run-' + id);
+    btn.disabled = true;
+    btn.textContent = 'Running...';
+    await tick();
+    const t = performance.now();
+    EXP[id] = e.run();
+    EXP[id].ms = performance.now() - t;
+    const r = EXP[id];
+    $('#out-' + id).innerHTML =
+      '<p class="risk r-' + r.risk.level + '"><b>' + r.risk.level + ' risk.</b> ' + esc(r.risk.why) + '</p>' + chart(r.series, r.theory, e.xLabel) +
+      '<div class="scroll"><table><thead><tr>' + r.head.map((h) => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' + r.rows.map((row) => '<tr>' + row.map((c) => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div><p class="finding">' + esc(r.finding) + '</p>';
+    btn.disabled = false;
+    btn.textContent = 'Run again';
+    updateRiskTable();
+  };
+  function updateRiskTable() {
+    $('#riskBody').innerHTML = D.EXPERIMENTS.map((e) => {
+      const r = EXP[e.id];
+      return '<tr><td><a href="#exp-' + e.id + '">' + esc(e.family) + '</a></td><td>' + esc(e.theory.split('.')[0] + '.') + '</td><td>' + (r ? esc(r.risk.why) : '<span class="muted">Not run yet</span>') + '</td><td>' + (r ? '<span class="risk-pill r-' + r.risk.level + '">' + r.risk.level + '</span>' : '') + '</td></tr>';
+    }).join('');
+  }
+  function renderLab() {
+    $('#labList').innerHTML = D.EXPERIMENTS.map((e) => '<article class="card exp" id="exp-' + e.id + '"><div class="rhead"><div><h3>' + esc(e.title) + '</h3><p class="muted">' + esc(e.theory) + '</p></div><button type="button" class="btn ghost" id="run-' + e.id + '">Run</button></div><div id="out-' + e.id + '"></div></article>').join('');
+    D.EXPERIMENTS.forEach((e) => $('#run-' + e.id).addEventListener('click', () => runExp(e.id)));
+    $('#runAll').addEventListener('click', async () => {
+      const b = $('#runAll');
+      b.disabled = true;
+      for (const e of D.EXPERIMENTS) {
+        b.textContent = 'Running ' + e.family + '...';
+        await runExp(e.id);
+      }
+      b.textContent = 'Run all again';
+      b.disabled = false;
+    });
+    updateRiskTable();
+  }
+
+  /* ---------------- complexity and gaps ---------------- */
+  const TECH = [
+    ['ORDERED_SEARCH', 'Red-Black Tree, B-Tree', 'O(log n) per operation; B-Tree O(log_t n) node reads', 'O(n)'],
+    ['DYNAMIC_PRIORITY', 'Binomial Heap, Fibonacci Heap', 'Decrease-key O(log n) vs O(1) amortised; extract-min O(log n)', 'O(n)'],
+    ['MST', 'Prim, Kruskal', 'O(V^2) with a matrix; O(E log E)', 'O(V^2); O(V + E)'],
+    ['APSP', 'Floyd-Warshall', 'O(V^3)', 'O(V^2)'],
+    ['KNAP_FRAC', 'Fractional Knapsack', 'O(n log n)', 'O(n)'],
+    ['KNAP_01', '0/1 Knapsack DP', 'O(nW), pseudo-polynomial', 'O(nW), or O(W) for the value alone'],
+    ['MCM', 'Matrix Chain Multiplication', 'O(n^3)', 'O(n^2)'],
+    ['HAMILTON', 'Backtracking', 'O(n!) worst case', 'O(n)'],
+    ['NQUEEN', 'Backtracking', 'O(n!) worst case, heavily pruned in practice', 'O(n)'],
+    ['TSP', 'Backtracking, Branch and Bound', 'O(n!) worst case; bounding prunes in practice', 'O(n) depth-first; exponential frontier best-first'],
+  ];
+  function renderTheory() {
+    $('#classBody').innerHTML = TECH.map((t) => {
+      const c = D.CLASS[t[0]];
+      return '<tr><td>' + esc(D.TITLES[t[0]]) + '</td><td>' + esc(t[1]) + '</td><td>' + esc(t[2]) + '</td><td>' + esc(t[3]) + '</td><td>' + esc(c.decision) + '</td><td>' + esc(c.optimization) + '</td><td><span class="badge k-' + c.kind + '">' + esc(c.label) + '</span></td></tr>';
+    }).join('');
+    $('#gapEvidence').textContent = 'Measuring...';
+    setTimeout(async () => {
+      for (const id of ['heap', 'tree', 'fw', 'tsp', 'knap', 'ham']) {
+        if (!EXP[id]) {
+          EXP[id] = D.EXPERIMENTS.find((e) => e.id === id).run();
+        }
+      }
+      const L = (id) => EXP[id].rows[EXP[id].rows.length - 1];
+      const heap = L('heap'),
+        tree = L('tree'),
+        fw = L('fw'),
+        knap = L('knap'),
+        ham = L('ham');
+      const tsp = EXP.tsp.rows.find((r) => r[0] === 10);
+      const GAPS = [
+        ['Binomial Heap pays O(log n) for every decrease-key', 'Fibonacci Heap: lazy cuts give amortised O(1) decrease-key (and later Pairing and Strict Fibonacci heaps)', 'At n = ' + heap[0] + ' with 60% escalations: ' + heap[1] + ' steps per decrease-key (Binomial / Fibonacci)'],
+        ['Red-Black Tree nodes are small and scattered, so every level can be a disk read', 'B-Tree and B+ Tree: wide nodes sized to a disk block', 'At n = ' + tree[0] + ': ' + tree[3] + ' node accesses per lookup (Red-Black) vs ' + tree[4] + ' (B-Tree)'],
+        ['Floyd-Warshall is cubic however sparse the graph is', "Johnson's algorithm: reweighting plus one Dijkstra per source, O(V^2 log V + VE)", 'V = ' + fw[0] + ' zones with only ' + 4 * fw[0] + ' links still cost ' + fw[1] + ' relaxations'],
+        ['0/1 Knapsack DP is pseudo-polynomial: its table grows with the value of W', 'FPTAS (round the values), meet-in-the-middle O(2^(n/2)), branch and bound', 'W = ' + knap[0] + ': ' + knap[2] + ' DP updates against ' + knap[1] + ' greedy steps'],
+        ['Greedy-by-ratio is optimal for Fractional Knapsack but breaks for 0/1', 'Dynamic programming for exact answers, approximation schemes for large inputs', 'Open the indivisible-upgrades scenario: greedy 130 vs optimum 170'],
+        ['Exact TSP by backtracking visits (n-1)! partial tours', 'Held-Karp DP O(n^2 2^n), Christofides 1.5-approximation, Lin-Kernighan heuristics, branch and cut', 'n = 10: ' + tsp[1] + ' backtracking states vs ' + tsp[2] + ' with Branch and Bound'],
+        ['Hamiltonian backtracking ignores simple necessary conditions', 'Degree and connectivity pruning, subset DP (Bellman-Held-Karp) O(n^2 2^n)', 'Pendant-vertex family, n = ' + ham[0] + ': ' + ham[2] + ' states to prove "no cycle"'],
+        ['Prim with an adjacency matrix costs V^2 even for sparse graphs', 'Prim with a Fibonacci Heap O(E + V log V), Boruvka, near-linear MST algorithms', 'Sparse graph results in the MST experiment'],
+        ['Matrix-chain DP is cubic', 'Hu-Shing algorithm: O(n log n)', 'n = 240 chain: see the Matrix Chain experiment'],
+        ['Plain N-Queen backtracking enumerates board states', 'Bitmask backtracking, and an O(n) constructive formula when only one layout is needed', 'First layout found in far fewer nodes than the full enumeration'],
+      ];
+      $('#gapBody').innerHTML = GAPS.map((g) => '<tr><td>' + esc(g[0]) + '</td><td>' + esc(g[1]) + '</td><td>' + esc(g[2]) + '</td></tr>').join('');
+      $('#gapEvidence').textContent = 'Evidence numbers are measured live by this app.';
+      updateRiskTable();
+    }, 30);
+  }
+
+  /* ---------------- self tests ---------------- */
+  let testRes = null;
+  function renderTests() {
+    if (!testRes) testRes = D.runTests();
+    const pass = testRes.filter((t) => t.pass).length;
+    $('#testBadge').textContent = pass + ' of ' + testRes.length + ' checks pass';
+    $('#testBadge').className = 'tbadge ' + (pass === testRes.length ? 'ok' : 'bad');
+    $('#testList').innerHTML = testRes.map((t) => '<li class="' + (t.pass ? 'pass' : 'fail') + '"><span>' + (t.pass ? 'Pass' : 'Fail') + '</span> ' + esc(t.name) + (t.detail ? ' <em>' + esc(t.detail) + '</em>' : '') + '</li>').join('');
+  }
+
+  /* ---------------- boot ---------------- */
+  function boot() {
+    $$('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+    $('#run').addEventListener('click', run);
+    const pr = D.preset('p5b');
+    state.req = pr.req;
+    state.scenario = pr.scenario;
+    state.presetId = pr.id;
+    renderForm();
+    renderPresets();
+    setScenario();
+    renderPipeline(null);
+    run();
+    setTimeout(renderTests, 400);
+  }
+  boot();
+})();
+
+</script>
+</body>
+</html>

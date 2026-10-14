@@ -1,0 +1,12 @@
+{
+  "name": "algorithm-2035",
+  "version": "1.0.0",
+  "description": "Autonomous DAA Decision Framework: recognises a smart-city problem from its properties, selects a syllabus algorithm, runs it and explains the choice.",
+  "license": "MIT",
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "node tests/run-tests.js",
+    "results": "node scripts/generate-results.js"
+  },
+  "engines": { "node": ">=18" }
+}
