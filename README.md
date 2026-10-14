@@ -96,8 +96,9 @@ The lab generates input families (sparse and dense graphs, growing chains, risin
 
 ## Team
 
-| Name | Roll number |
-|---|---|
-| _add team member_ | _add roll number_ |
+Nidheesh Kopparathi - 25WU0102186, 
+Rayan Faheem Shaik  - 25WU0102225, 
+Ayyagari Sriharsha  - 25WU0103008, 
+Rishi Bedi          - 25WU0102226
 
 Course: Design and Analysis of Algorithms, AI ML Leopards. Licence: MIT.
